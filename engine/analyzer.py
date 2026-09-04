@@ -51,6 +51,7 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
     missing_protections = []
     forbidden_terms = []
     contradictions = []
+    comparison_table = []
 
     text_lower = lease_text.lower()
 
@@ -78,11 +79,24 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
                     "clause_quote": quote,
                     "explanation": f"Security deposit requirement of {val} months' rent is within acceptable range (1.0 to 2.0 months)."
                 })
+                comparison_table.append({
+                    "parameter": "Security Deposit Range",
+                    "submitted_term": f"{val} months' rent",
+                    "standard_policy": "1.0 to 2.0 months' rent",
+                    "status": "COMPLIANT"
+                })
             else:
                 deviations.append({
                     "clause_quote": quote,
                     "deviation_explanation": f"Security deposit requirement of {val} months' rent violates company policy (maximum allowed is 2.0 months).",
-                    "standard_rule_violated": "Acceptable Security Deposit Range (1.0 - 2.0 months rent)"
+                    "standard_rule_violated": "Acceptable Security Deposit Range (1.0 - 2.0 months rent)",
+                    "suggested_renegotiation_clause": "Tenant shall pay to Landlord a Security Deposit in the sum equal to one and a half (1.5) months' base monthly rent prior to occupancy, held in accordance with applicable residential leasing standards."
+                })
+                comparison_table.append({
+                    "parameter": "Security Deposit Range",
+                    "submitted_term": f"{val} months' rent",
+                    "standard_policy": "1.0 to 2.0 months' rent",
+                    "status": "DEVIATION"
                 })
 
     # 2. Termination Notice Period & Contradictions Analysis
@@ -120,6 +134,12 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
             "clause_quote_2": f2["quote"],
             "explanation": f"Lease contains contradictory termination notice terms ({f1['val']} days in one clause vs {f2['val']} days in another clause)."
         })
+        comparison_table.append({
+            "parameter": "Termination Notice Period",
+            "submitted_term": f"Contradictory ({f1['val']} days vs {f2['val']} days)",
+            "standard_policy": "30 to 60 days written notice",
+            "status": "CONTRADICTION"
+        })
     elif len(notice_findings) >= 1:
         f = notice_findings[0]
         days = f["val"]
@@ -129,11 +149,24 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
                 "clause_quote": quote,
                 "explanation": f"Termination notice period of {days} days is within acceptable range (30 to 60 days)."
             })
+            comparison_table.append({
+                "parameter": "Termination Notice Period",
+                "submitted_term": f"{days} days notice",
+                "standard_policy": "30 to 60 days written notice",
+                "status": "COMPLIANT"
+            })
         else:
             deviations.append({
                 "clause_quote": quote,
                 "deviation_explanation": f"Notice period of {days} days violates company policy requirement (30 to 60 days).",
-                "standard_rule_violated": "Acceptable Termination Notice Period (30 - 60 days)"
+                "standard_rule_violated": "Acceptable Termination Notice Period (30 - 60 days)",
+                "suggested_renegotiation_clause": "Either party may terminate or elect not to renew this Lease Agreement upon the expiration of the initial term by delivering thirty (30) days prior written notice to the other party."
+            })
+            comparison_table.append({
+                "parameter": "Termination Notice Period",
+                "submitted_term": f"{days} days notice",
+                "standard_policy": "30 to 60 days written notice",
+                "status": "DEVIATION"
             })
 
     # 3. Required Protection: Maintenance Responsibility
@@ -148,12 +181,25 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
                     "clause_quote": quote,
                     "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
                 })
+                comparison_table.append({
+                    "parameter": "Maintenance Responsibility",
+                    "submitted_term": "Landlord structural/HVAC maintenance included",
+                    "standard_policy": "Mandatory Landlord structural & HVAC duty",
+                    "status": "COMPLIANT"
+                })
                 break
 
     if not has_maint:
         missing_protections.append({
             "missing_protection": "Landlord Maintenance Responsibility Clause",
-            "why_it_matters": "The lease agreement entirely omits landlord maintenance obligations for structural, plumbing, heating, and HVAC systems, exposing tenant to unallocated repair liability."
+            "why_it_matters": "The lease agreement entirely omits landlord maintenance obligations for structural, plumbing, heating, and HVAC systems, exposing tenant to unallocated repair liability.",
+            "suggested_renegotiation_clause": "Landlord Maintenance Responsibility: Landlord shall be strictly responsible for maintaining the structural integrity of the Premises, roof, foundations, plumbing systems, electrical grids, and central HVAC systems in proper operating condition throughout the Lease term."
+        })
+        comparison_table.append({
+            "parameter": "Maintenance Responsibility",
+            "submitted_term": "Omitted (Entirely Silent)",
+            "standard_policy": "Mandatory Landlord structural & HVAC duty",
+            "status": "MISSING"
         })
 
     # 4. Required Protection: Return of Security Deposit Timeline
@@ -178,18 +224,38 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
                         "clause_quote": quote,
                         "explanation": f"Security deposit return timeframe of {days_val} days complies with maximum 30 calendar days requirement."
                     })
+                    comparison_table.append({
+                        "parameter": "Deposit Refund Timeline",
+                        "submitted_term": f"{days_val} calendar days",
+                        "standard_policy": "Maximum 30 calendar days",
+                        "status": "COMPLIANT"
+                    })
                 else:
                     deviations.append({
                         "clause_quote": quote,
                         "deviation_explanation": f"Security deposit return timeframe of {days_val} days exceeds company maximum limit of 30 days.",
-                        "standard_rule_violated": "Return of Security Deposit Timeline (Max 30 days)"
+                        "standard_rule_violated": "Return of Security Deposit Timeline (Max 30 days)",
+                        "suggested_renegotiation_clause": "Within thirty (30) calendar days following the expiration of this Lease and surrender of Premises by Tenant, Landlord shall refund the Security Deposit in full alongside an itemized written statement of lawful deductions."
+                    })
+                    comparison_table.append({
+                        "parameter": "Deposit Refund Timeline",
+                        "submitted_term": f"{days_val} calendar days",
+                        "standard_policy": "Maximum 30 calendar days",
+                        "status": "DEVIATION"
                     })
                 break
 
     if not has_dep_ret:
         missing_protections.append({
             "missing_protection": "Return of Security Deposit Timeline Clause",
-            "why_it_matters": "The lease agreement omits a fixed maximum timeframe for returning the security deposit following lease expiration or property surrender."
+            "why_it_matters": "The lease agreement omits a fixed maximum timeframe for returning the security deposit following lease expiration or property surrender.",
+            "suggested_renegotiation_clause": "Security Deposit Return: Landlord shall refund the Security Deposit alongside a written itemized accounting of any lawful deductions within thirty (30) calendar days following key surrender and tenancy conclusion."
+        })
+        comparison_table.append({
+            "parameter": "Deposit Refund Timeline",
+            "submitted_term": "Omitted (Entirely Silent)",
+            "standard_policy": "Maximum 30 calendar days",
+            "status": "MISSING"
         })
 
     # 5. Forbidden Terms Analysis
@@ -198,7 +264,14 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
         quote = get_sentence_quote(lease_text, auto_ren_match.start(), auto_ren_match.end())
         forbidden_terms.append({
             "clause_quote": quote,
-            "explanation": "Clause mandates automatic lease renewal for a full multi-month/annual term without requiring prior advance written notice or option to terminate."
+            "explanation": "Clause mandates automatic lease renewal for a full multi-month/annual term without requiring prior advance written notice or option to terminate.",
+            "suggested_renegotiation_clause": "Tenancy Renewal: Upon expiration of the initial term, this Lease Agreement shall convert to a month-to-month tenancy, terminable by either party upon thirty (30) days advance written notice."
+        })
+        comparison_table.append({
+            "parameter": "Lease Renewal Mechanism",
+            "submitted_term": "Automatic 1-Year Renewal without notice",
+            "standard_policy": "Explicit prior notice required; no forced auto-renewal",
+            "status": "FORBIDDEN"
         })
 
     waiver_match = re.search(r'waive[^\.\n]*?(right to withhold rent|withhold rent)', text_lower)
@@ -206,14 +279,21 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
         quote = get_sentence_quote(lease_text, waiver_match.start(), waiver_match.end())
         forbidden_terms.append({
             "clause_quote": quote,
-            "explanation": "Clause forces tenant to waive statutory right to withhold rent or seek remedy for uninhabitable conditions."
+            "explanation": "Clause forces tenant to waive statutory right to withhold rent or seek remedy for uninhabitable conditions.",
+            "suggested_renegotiation_clause": "Tenant Remedies: Nothing in this Agreement shall operate to waive any statutory rights or legal remedies available to Tenant under applicable local and state residential housing codes."
+        })
+        comparison_table.append({
+            "parameter": "Tenant Legal Remedies",
+            "submitted_term": "Waiver of right to withhold rent",
+            "standard_policy": "Zero tolerance for waiver of statutory tenant rights",
+            "status": "FORBIDDEN"
         })
 
     plain_summary = [
-        "Base monthly rent and security deposit requirements.",
-        "Notice period required for lease termination or non-renewal.",
-        "Landlord structural and system maintenance obligations.",
-        "Security deposit refund timeline post-tenancy."
+        "Base monthly rent payment schedule and security deposit obligations.",
+        "Required written notice period for non-renewal or lease termination.",
+        "Landlord structural and utility system maintenance duties.",
+        "Security deposit return timeframe and itemized deduction rules."
     ]
 
     return {
@@ -222,6 +302,7 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
         "missing_protections": missing_protections,
         "forbidden_terms": forbidden_terms,
         "contradictions": contradictions,
+        "comparison_table": comparison_table,
         "plain_language_summary": plain_summary
     }
 
@@ -255,9 +336,9 @@ Review the following lease agreement against our standard property management po
 ### INSTRUCTIONS:
 Analyze the lease clause-by-clause and generate a JSON report with exact keys:
 1. "matches": array of items {{"clause_quote": "<VERBATIM snippet from lease>", "explanation": "<why it matches>"}}
-2. "deviations": array of items {{"clause_quote": "<VERBATIM snippet from lease>", "deviation_explanation": "<plain language explanation>", "standard_rule_violated": "<rule title/ref>"}}
-3. "missing_protections": array of items {{"missing_protection": "<what required clause is missing>", "why_it_matters": "<why it matters>"}}
-4. "forbidden_terms": array of items {{"clause_quote": "<VERBATIM snippet from lease>", "explanation": "<why forbidden>"}}
+2. "deviations": array of items {{"clause_quote": "<VERBATIM snippet from lease>", "deviation_explanation": "<plain language explanation>", "standard_rule_violated": "<rule title/ref>", "suggested_renegotiation_clause": "<replacement clause>"}}
+3. "missing_protections": array of items {{"missing_protection": "<what required clause is missing>", "why_it_matters": "<why it matters>", "suggested_renegotiation_clause": "<suggested clause to add>"}}
+4. "forbidden_terms": array of items {{"clause_quote": "<VERBATIM snippet from lease>", "explanation": "<why forbidden>", "suggested_renegotiation_clause": "<replacement clause>"}}
 5. "contradictions": array of items {{"clause_quote_1": "<VERBATIM quote 1>", "clause_quote_2": "<VERBATIM quote 2>", "explanation": "<why contradictory>"}}
 6. "plain_language_summary": array of 3-4 plain-language strings summarizing key terms a signer must understand.
 
@@ -294,24 +375,18 @@ Return ONLY valid raw JSON without markdown formatting.
         quote = m.get("clause_quote", "")
         if is_quote_in_source(quote, lease_text):
             verified_matches.append(m)
-        else:
-            print(f"[Quote Verification Dropped Unverifiable Match Quote]: '{quote}'")
 
     verified_deviations = []
     for d in parsed_res.get("deviations", []):
         quote = d.get("clause_quote", "")
         if is_quote_in_source(quote, lease_text):
             verified_deviations.append(d)
-        else:
-            print(f"[Quote Verification Dropped Unverifiable Deviation Quote]: '{quote}'")
 
     verified_forbidden = []
     for f in parsed_res.get("forbidden_terms", []):
         quote = f.get("clause_quote", "")
         if is_quote_in_source(quote, lease_text):
             verified_forbidden.append(f)
-        else:
-            print(f"[Quote Verification Dropped Unverifiable Forbidden Quote]: '{quote}'")
 
     verified_contradictions = []
     for c in parsed_res.get("contradictions", []):
@@ -319,11 +394,10 @@ Return ONLY valid raw JSON without markdown formatting.
         q2 = c.get("clause_quote_2", "")
         if is_quote_in_source(q1, lease_text) and is_quote_in_source(q2, lease_text):
             verified_contradictions.append(c)
-        else:
-            print(f"[Quote Verification Dropped Unverifiable Contradiction Quote]: '{q1}' | '{q2}'")
 
     missing_protections = parsed_res.get("missing_protections", [])
     plain_summary = parsed_res.get("plain_language_summary", det_res["plain_language_summary"])
+    comparison_table = parsed_res.get("comparison_table", det_res.get("comparison_table", []))
 
     # Fallback merge if LLM output missed findings present in deterministic rule output
     if not verified_deviations and det_res["deviations"]:
@@ -334,10 +408,22 @@ Return ONLY valid raw JSON without markdown formatting.
         verified_forbidden = det_res["forbidden_terms"]
     if not verified_contradictions and det_res["contradictions"]:
         verified_contradictions = det_res["contradictions"]
+    if not comparison_table and det_res["comparison_table"]:
+        comparison_table = det_res["comparison_table"]
 
     verified_matches = [m for m in verified_matches if m.get("clause_quote")]
     verified_deviations = [d for d in verified_deviations if d.get("clause_quote")]
     verified_forbidden = [f for f in verified_forbidden if f.get("clause_quote")]
+
+    # Multi-dimensional risk score calculations
+    financial_risk = 100 - (len(verified_deviations) * 30 + len(verified_forbidden) * 20)
+    financial_risk = max(0, financial_risk)
+
+    legal_risk = 100 - (len(verified_forbidden) * 50 + len(verified_contradictions) * 35)
+    legal_risk = max(0, legal_risk)
+
+    operational_risk = 100 - (len(missing_protections) * 40 + len(verified_deviations) * 15)
+    operational_risk = max(0, operational_risk)
 
     # --- DETERMINISTIC FINAL COMPLIANCE GATE ---
     is_clean = (
@@ -361,6 +447,12 @@ Return ONLY valid raw JSON without markdown formatting.
             "forbidden_terms_count": len(verified_forbidden),
             "contradictions_count": len(verified_contradictions)
         },
+        "risk_breakdown": {
+            "financial_score": financial_risk,
+            "legal_score": legal_risk,
+            "operational_score": operational_risk
+        },
+        "comparison_table": comparison_table,
         "findings": {
             "matches": verified_matches,
             "deviations": verified_deviations,

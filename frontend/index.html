@@ -15,17 +15,15 @@
         <!-- Header -->
         <header class="app-header">
             <div class="brand">
-                <div class="logo-icon">⚖️</div>
+                <div class="logo-badge">NEXUS LEGAL</div>
                 <div>
                     <h1>Lease Agreement Review Assistant</h1>
                     <p class="subtitle">Automated Clause-by-Clause RAG Review against Standard Positions — Track PS05</p>
                 </div>
             </div>
             <div class="header-actions">
-                <a href="https://github.com/Gopibannu/NexusTiQ24-PS05.git" target="_blank" class="github-link">
-                    <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-                    GitHub Repo
-                </a>
+                <button id="btnOpenPolicy" class="btn-outline">POLICY RULEBOOK</button>
+                <a href="https://github.com/Gopibannu/NexusTiQ24-PS05.git" target="_blank" class="github-link">GITHUB REPO</a>
                 <div class="track-badge">TRACK_ID=PS05</div>
             </div>
         </header>
@@ -35,13 +33,13 @@
             <!-- Left Panel: Input & Sample Selector -->
             <section class="panel input-panel">
                 <div class="panel-header">
-                    <h2>📄 Lease Document Input</h2>
-                    <span class="step-indicator">Step 1 of 2</span>
+                    <h2>LEASE DOCUMENT INPUT</h2>
+                    <span class="step-indicator">STEP 1 OF 2</span>
                 </div>
 
                 <!-- Sample Lease Selector -->
                 <div class="sample-lease-container">
-                    <label for="sampleLeaseSelect">⚡ Select Synthetic Lease Scenario:</label>
+                    <label for="sampleLeaseSelect">SELECT SYNTHETIC LEASE SCENARIO:</label>
                     <div class="select-wrapper">
                         <select id="sampleLeaseSelect">
                             <option value="" disabled selected>Loading synthetic lease scenarios...</option>
@@ -52,58 +50,57 @@
                 <!-- Text Area -->
                 <div class="input-group">
                     <div class="input-label-row">
-                        <label for="leaseTextInput">Raw Contract Agreement Text:</label>
-                        <button id="clearBtn" class="btn-text">Clear Text</button>
+                        <label for="leaseTextInput">RAW CONTRACT AGREEMENT TEXT:</label>
+                        <button id="clearBtn" class="btn-text">CLEAR TEXT</button>
                     </div>
-                    <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or select a sample lease above..."></textarea>
+                    <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or select a sample lease scenario above..."></textarea>
                 </div>
 
                 <!-- File Upload -->
                 <div class="upload-dropzone" id="dropzone">
                     <input type="file" id="fileInput" accept=".txt,.md,.doc,.docx">
                     <div class="dropzone-content">
-                        <span class="upload-icon">📁</span>
-                        <p><strong>Click to upload</strong> or drag & drop text file</p>
-                        <span class="file-types">Supports .txt, .md files</span>
+                        <span class="dropzone-title">UPLOAD FILE</span>
+                        <p>Click to upload or drag & drop text file</p>
+                        <span class="file-types">Supports .txt, .md text files</span>
                     </div>
                 </div>
 
                 <!-- Action Button -->
                 <button id="analyzeBtn" class="btn-primary">
-                    <span class="btn-icon">🔍</span> Run Automated Legal Review
+                    RUN AUTOMATED LEGAL REVIEW
                 </button>
             </section>
 
-            <!-- Right Panel: Report Output & Side-by-Side Inspector -->
+            <!-- Right Panel: Report Output -->
             <section class="panel report-panel" id="reportPanel">
                 <!-- Initial Empty State -->
                 <div id="emptyState" class="state-container">
-                    <div class="state-icon">📋</div>
+                    <div class="state-badge">AWAITING INPUT</div>
                     <h3>No Analysis Run Yet</h3>
-                    <p>Select a sample lease scenario on the left or paste agreement text, then click <strong>Run Automated Legal Review</strong> to generate the structured audit report.</p>
+                    <p>Select a synthetic lease scenario on the left or paste contract text, then click <strong>RUN AUTOMATED LEGAL REVIEW</strong> to generate the structured audit report.</p>
                 </div>
 
                 <!-- Loading State -->
                 <div id="loadingState" class="state-container hidden">
                     <div class="spinner"></div>
-                    <h3>Reviewing Lease Agreement...</h3>
-                    <p>Executing RAG vector retrieval (`gemini-embedding-001`), Gemini reasoning (`gemini-3.5-flash-lite`), and deterministic quote verification.</p>
+                    <h3>REVIEWING LEASE AGREEMENT</h3>
+                    <p>Executing RAG vector retrieval (gemini-embedding-001), Gemini reasoning (gemini-3.5-flash-lite), and deterministic quote verification.</p>
                 </div>
 
                 <!-- Error State -->
                 <div id="errorState" class="state-container hidden">
-                    <div class="state-icon error-icon">⚠️</div>
-                    <h3 id="errorTitle">Analysis Failed</h3>
+                    <div class="state-badge badge-error">ANALYSIS FAILED</div>
+                    <h3 id="errorTitle">Analysis Request Failed</h3>
                     <p id="errorMessage">An error occurred while processing the lease text.</p>
-                    <button id="retryBtn" class="btn-secondary">Try Again</button>
+                    <button id="retryBtn" class="btn-secondary">TRY AGAIN</button>
                 </div>
 
-                <!-- Report Content (Populated via JS) -->
+                <!-- Report Content -->
                 <div id="reportContent" class="report-content hidden">
                     <!-- Status Banner & Toolbar -->
                     <div class="report-top-bar">
                         <div id="statusBanner" class="status-banner">
-                            <div class="status-icon" id="bannerIcon"></div>
                             <div class="status-info">
                                 <span class="status-label">COMPLIANCE REVIEW STATUS</span>
                                 <h2 id="bannerStatusText" class="status-title"></h2>
@@ -114,90 +111,126 @@
 
                         <!-- Action Toolbar -->
                         <div class="action-toolbar">
-                            <button id="btnExportJson" class="tool-btn" title="Export structured JSON report">
-                                <span>📥</span> Export JSON
-                            </button>
-                            <button id="btnPrintReport" class="tool-btn" title="Print or save as PDF">
-                                <span>🖨️</span> Print / PDF
-                            </button>
-                            <button id="btnCopySummary" class="tool-btn" title="Copy plain-language summary to clipboard">
-                                <span>📋</span> Copy Summary
-                            </button>
+                            <button id="btnExportJson" class="tool-btn" title="Export structured JSON report">EXPORT JSON</button>
+                            <button id="btnPrintReport" class="tool-btn" title="Print or save as PDF">PRINT / PDF</button>
+                            <button id="btnCopySummary" class="tool-btn" title="Copy plain-language summary to clipboard">COPY SUMMARY</button>
                         </div>
                     </div>
 
-                    <!-- Risk Meter & Metrics Dashboard -->
+                    <!-- Multi-Dimensional Risk Matrix & Overall Score -->
                     <div class="risk-dashboard">
                         <div class="risk-score-card">
                             <div class="risk-score-header">
-                                <span>Compliance Score</span>
+                                <span>OVERALL COMPLIANCE SCORE</span>
                                 <span id="riskScoreBadge" class="risk-badge">100 / 100</span>
                             </div>
                             <div class="risk-bar-container">
                                 <div id="riskBarFill" class="risk-bar-fill" style="width: 100%;"></div>
                             </div>
-                            <p id="riskScoreSubtext" class="risk-score-subtext">Fully compliant lease document.</p>
+                            <p id="riskScoreSubtext" class="risk-score-subtext">Fully compliant lease agreement.</p>
                         </div>
 
-                        <!-- Metrics Grid -->
+                        <!-- Multi-Dimensional Risk Breakdown Grid -->
+                        <div class="multi-risk-grid">
+                            <div class="risk-dim-card">
+                                <span class="risk-dim-title">FINANCIAL RISK</span>
+                                <span id="financialScoreVal" class="risk-dim-val">100 / 100</span>
+                                <div class="risk-dim-bar"><div id="financialBarFill" class="risk-dim-bar-fill" style="width: 100%;"></div></div>
+                            </div>
+                            <div class="risk-dim-card">
+                                <span class="risk-dim-title">LEGAL LIABILITY RISK</span>
+                                <span id="legalScoreVal" class="risk-dim-val">100 / 100</span>
+                                <div class="risk-dim-bar"><div id="legalBarFill" class="risk-dim-bar-fill" style="width: 100%;"></div></div>
+                            </div>
+                            <div class="risk-dim-card">
+                                <span class="risk-dim-title">OPERATIONAL RISK</span>
+                                <span id="opScoreVal" class="risk-dim-val">100 / 100</span>
+                                <div class="risk-dim-bar"><div id="opBarFill" class="risk-dim-bar-fill" style="width: 100%;"></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Counts Grid -->
                         <div class="metrics-grid">
                             <div class="metric-card metric-forbidden">
                                 <div class="metric-value" id="countForbidden">0</div>
-                                <div class="metric-label">Forbidden Terms</div>
+                                <div class="metric-label">FORBIDDEN TERMS</div>
                             </div>
                             <div class="metric-card metric-deviations">
                                 <div class="metric-value" id="countDeviations">0</div>
-                                <div class="metric-label">Deviations</div>
+                                <div class="metric-label">DEVIATIONS</div>
                             </div>
                             <div class="metric-card metric-missing">
                                 <div class="metric-value" id="countMissing">0</div>
-                                <div class="metric-label">Missing Protections</div>
+                                <div class="metric-label">MISSING PROTECTIONS</div>
                             </div>
                             <div class="metric-card metric-contradictions">
                                 <div class="metric-value" id="countContradictions">0</div>
-                                <div class="metric-label">Contradictions</div>
+                                <div class="metric-label">CONTRADICTIONS</div>
                             </div>
                             <div class="metric-card metric-matches">
                                 <div class="metric-value" id="countMatches">0</div>
-                                <div class="metric-label">Clean Matches</div>
+                                <div class="metric-label">CLEAN MATCHES</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Side-by-Side Term Comparison Table -->
+                    <div class="report-card">
+                        <div class="card-header">
+                            <h3>LEASE TERM VS. COMPANY STANDARD COMPARISON MATRIX</h3>
+                            <span class="card-subtitle">Side-by-side term verification against standard positions</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>PARAMETER</th>
+                                        <th>SUBMITTED LEASE TERM</th>
+                                        <th>COMPANY STANDARD POSITION</th>
+                                        <th>AUDIT STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparisonTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
                     <!-- Plain Language Summary -->
                     <div class="report-card summary-card">
                         <div class="card-header">
-                            <h3>💡 Executive Plain-Language Summary</h3>
-                            <span class="card-subtitle">Key terms every signer must understand before executing</span>
+                            <h3>EXECUTIVE PLAIN-LANGUAGE SUMMARY</h3>
+                            <span class="card-subtitle">Key terms every contract signer must understand</span>
                         </div>
                         <ul id="plainSummaryList" class="summary-list"></ul>
                     </div>
 
-                    <!-- Interactive Document & Findings Inspector -->
+                    <!-- Inspector Filter & Search Bar -->
                     <div class="inspector-tabs-row">
                         <div class="filter-pills" id="filterPills">
-                            <button class="pill active" data-filter="all">All Findings</button>
-                            <button class="pill" data-filter="forbidden">Forbidden (0)</button>
-                            <button class="pill" data-filter="deviations">Deviations (0)</button>
-                            <button class="pill" data-filter="missing">Missing (0)</button>
-                            <button class="pill" data-filter="contradictions">Contradictions (0)</button>
-                            <button class="pill" data-filter="matches">Matches (0)</button>
+                            <button class="pill active" data-filter="all">ALL FINDINGS</button>
+                            <button class="pill" data-filter="forbidden">FORBIDDEN (0)</button>
+                            <button class="pill" data-filter="deviations">DEVIATIONS (0)</button>
+                            <button class="pill" data-filter="missing">MISSING (0)</button>
+                            <button class="pill" data-filter="contradictions">CONTRADICTIONS (0)</button>
+                            <button class="pill" data-filter="matches">MATCHES (0)</button>
                         </div>
                         <div class="search-box">
-                            <input type="text" id="findingSearchInput" placeholder="🔎 Search findings...">
+                            <input type="text" id="findingSearchInput" placeholder="SEARCH FINDINGS...">
                         </div>
                     </div>
 
-                    <!-- Interactive Split View: Document Viewer + Findings List -->
+                    <!-- Split Inspector: Document Viewer + Findings List -->
                     <div class="split-inspector">
                         <!-- Left Sub-panel: Quoted Source Inspector -->
                         <div class="doc-viewer-card">
                             <div class="doc-viewer-header">
-                                <span>📖 Interactive Source Document Viewer</span>
-                                <span class="doc-hint">Click any finding on the right to highlight quote snippet</span>
+                                <span>SOURCE DOCUMENT INSPECTOR</span>
+                                <span class="doc-hint">Click finding card to highlight verbatim quote</span>
                             </div>
                             <div class="doc-viewer-body" id="docViewerBody">
-                                <!-- Rendered lease text with quote span anchors -->
+                                <!-- Rendered lease text with quote anchors -->
                             </div>
                         </div>
 
@@ -206,8 +239,8 @@
                             <!-- 1. Forbidden Terms -->
                             <div id="sectionForbidden" class="finding-section">
                                 <div class="section-title text-danger">
-                                    <span>🚫 Forbidden Terms Found</span>
-                                    <span class="badge badge-danger">Zero Tolerance</span>
+                                    <span>FORBIDDEN TERMS FOUND</span>
+                                    <span class="badge badge-danger">ZERO TOLERANCE</span>
                                 </div>
                                 <div id="forbiddenList" class="finding-list"></div>
                             </div>
@@ -215,8 +248,8 @@
                             <!-- 2. Deviations -->
                             <div id="sectionDeviations" class="finding-section">
                                 <div class="section-title text-warning">
-                                    <span>⚠️ Policy Deviations</span>
-                                    <span class="badge badge-warning">Out of Standard Range</span>
+                                    <span>POLICY DEVIATIONS</span>
+                                    <span class="badge badge-warning">OUT OF RANGE</span>
                                 </div>
                                 <div id="deviationsList" class="finding-list"></div>
                             </div>
@@ -224,8 +257,8 @@
                             <!-- 3. Missing Protections (Silence) -->
                             <div id="sectionMissing" class="finding-section">
                                 <div class="section-title text-info">
-                                    <span>❓ Missing Protections (Silence Findings)</span>
-                                    <span class="badge badge-info">Required Clause Omitted</span>
+                                    <span>MISSING PROTECTIONS (SILENCE FINDINGS)</span>
+                                    <span class="badge badge-info">REQUIRED CLAUSE OMITTED</span>
                                 </div>
                                 <div id="missingList" class="finding-list"></div>
                             </div>
@@ -233,8 +266,8 @@
                             <!-- 4. Contradictions -->
                             <div id="sectionContradictions" class="finding-section">
                                 <div class="section-title text-purple">
-                                    <span>⚡ Internal Clause Contradictions</span>
-                                    <span class="badge badge-purple">Conflicting Terms</span>
+                                    <span>INTERNAL CLAUSE CONTRADICTIONS</span>
+                                    <span class="badge badge-purple">CONFLICTING TERMS</span>
                                 </div>
                                 <div id="contradictionsList" class="finding-list"></div>
                             </div>
@@ -242,8 +275,8 @@
                             <!-- 5. Matches -->
                             <div id="sectionMatches" class="finding-section">
                                 <div class="section-title text-success">
-                                    <span>✅ Compliant Standard Matches</span>
-                                    <span class="badge badge-success">Aligned with Policy</span>
+                                    <span>COMPLIANT STANDARD MATCHES</span>
+                                    <span class="badge badge-success">ALIGNED WITH POLICY</span>
                                 </div>
                                 <div id="matchesList" class="finding-list"></div>
                             </div>
@@ -259,7 +292,44 @@
         </footer>
     </div>
 
-    <!-- Toast Container -->
+    <!-- Slide-Out Policy Rulebook Inspector Modal -->
+    <div id="policyModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>STANDARD POSITIONS POLICY RULEBOOK</h2>
+                <button id="btnClosePolicy" class="btn-text">CLOSE</button>
+            </div>
+            <div class="modal-body" id="policyModalBody">
+                <div class="policy-rule-card">
+                    <span class="rule-cat">DEPOSIT RANGE POLICY</span>
+                    <h3>1. Acceptable Security Deposit Range</h3>
+                    <p>Security deposit required must be between 1.0 month and 2.0 months of base monthly rent. Deposits exceeding 2.0 months are unacceptable deviations.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">NOTICE PERIOD POLICY</span>
+                    <h3>2. Acceptable Termination Notice Period</h3>
+                    <p>Written notice for lease termination or non-renewal must be between 30 days and 60 days. Periods shorter than 30 days or longer than 60 days are unacceptable deviations.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">REQUIRED PROTECTION</span>
+                    <h3>3. Maintenance Responsibility Clause</h3>
+                    <p>Landlord must be explicitly responsible for structural repairs, heating, plumbing, electrical grids, and central HVAC systems. Silence is a critical missing protection.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">REQUIRED PROTECTION</span>
+                    <h3>4. Return of Security Deposit Timeline</h3>
+                    <p>Security deposit refund with itemized accounting must be returned within a maximum of 30 calendar days post-surrender. Silence is a critical missing protection.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">ZERO TOLERANCE</span>
+                    <h3>5. Strictly Forbidden Terms</h3>
+                    <p>Automatic lease renewal without notice, waiver of tenant right to withhold rent, unilateral mid-term rent increases, and landlord entry without 24-hour advance notice.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="script.js"></script>

@@ -1,4 +1,4 @@
-// Frontend Javascript logic for Lease Review Assistant
+// Executive LegalTech Javascript Controller — NexusTiQ24 Track PS05
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const reportContent = document.getElementById('reportContent');
     const statusBanner = document.getElementById('statusBanner');
-    const bannerIcon = document.getElementById('bannerIcon');
     const bannerStatusText = document.getElementById('bannerStatusText');
     const bannerSubtext = document.getElementById('bannerSubtext');
     const processingTimer = document.getElementById('processingTimer');
@@ -26,11 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnExportJson = document.getElementById('btnExportJson');
     const btnPrintReport = document.getElementById('btnPrintReport');
     const btnCopySummary = document.getElementById('btnCopySummary');
+    const btnOpenPolicy = document.getElementById('btnOpenPolicy');
+    const btnClosePolicy = document.getElementById('btnClosePolicy');
+    const policyModal = document.getElementById('policyModal');
 
     const riskScoreBadge = document.getElementById('riskScoreBadge');
     const riskBarFill = document.getElementById('riskBarFill');
     const riskScoreSubtext = document.getElementById('riskScoreSubtext');
 
+    const financialScoreVal = document.getElementById('financialScoreVal');
+    const financialBarFill = document.getElementById('financialBarFill');
+
+    const legalScoreVal = document.getElementById('legalScoreVal');
+    const legalBarFill = document.getElementById('legalBarFill');
+
+    const opScoreVal = document.getElementById('opScoreVal');
+    const opBarFill = document.getElementById('opBarFill');
+
+    const comparisonTableBody = document.getElementById('comparisonTableBody');
     const plainSummaryList = document.getElementById('plainSummaryList');
 
     const countForbidden = document.getElementById('countForbidden');
@@ -140,7 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     }
 
-    // 5. Action Buttons
+    // 5. Policy Rulebook Modal
+    btnOpenPolicy.addEventListener('click', () => policyModal.classList.remove('hidden'));
+    btnClosePolicy.addEventListener('click', () => policyModal.classList.add('hidden'));
+    policyModal.addEventListener('click', (e) => {
+        if (e.target === policyModal) policyModal.classList.add('hidden');
+    });
+
+    // 6. Toolbar Actions
     analyzeBtn.addEventListener('click', runReview);
     retryBtn.addEventListener('click', runReview);
 
@@ -167,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast("Executive summary copied to clipboard!");
     });
 
-    // 6. Run Review Request
+    // 7. Run Review Request
     async function runReview() {
         const text = leaseTextInput.value.trim();
         if (!text || text.length < 30) {
@@ -218,17 +237,18 @@ document.addEventListener('DOMContentLoaded', () => {
         showState('error');
     }
 
-    // 7. Render Report Findings
+    // 8. Render Report Findings & Matrices
     function renderReport(data, rawText) {
         const status = data.status;
         const isClean = data.is_clean;
         const summary = data.summary || {};
+        const riskBreakdown = data.risk_breakdown || {};
+        const compTable = data.comparison_table || [];
         const findings = data.findings || {};
         const plainSummary = data.plain_language_summary || [];
 
         // Status Banner
         statusBanner.className = 'status-banner ' + (isClean ? 'status-clean' : 'status-flagged');
-        bannerIcon.textContent = isClean ? '✅' : '🚨';
         bannerStatusText.textContent = status;
         bannerSubtext.textContent = isClean 
             ? 'Zero deviations, zero missing required clauses, and zero forbidden terms found. All clauses align with standard positions.' 
@@ -254,8 +274,24 @@ document.addEventListener('DOMContentLoaded', () => {
             riskBarFill.style.background = "#f59e0b";
         } else {
             riskScoreSubtext.textContent = "High compliance risk — forbidden terms or major deviations present.";
-            riskBarFill.style.background = "#ef4444";
+            riskBarFill.style.background = "#f43f5e";
         }
+
+        // Multi-Dimensional Risk Scores
+        const finScore = riskBreakdown.financial_score ?? 100;
+        financialScoreVal.textContent = `${finScore} / 100`;
+        financialBarFill.style.width = `${finScore}%`;
+
+        const legScore = riskBreakdown.legal_score ?? 100;
+        legalScoreVal.textContent = `${legScore} / 100`;
+        legalBarFill.style.width = `${legScore}%`;
+
+        const opScore = riskBreakdown.operational_score ?? 100;
+        opScoreVal.textContent = `${opScore} / 100`;
+        opBarFill.style.width = `${opScore}%`;
+
+        // Render Comparison Table
+        renderComparisonTable(compTable);
 
         // Executive Plain Summary
         plainSummaryList.innerHTML = '';
@@ -274,31 +310,55 @@ document.addEventListener('DOMContentLoaded', () => {
         countContradictions.textContent = summary.contradictions_count || 0;
         countMatches.textContent = summary.matches_count || 0;
 
-        // Update Filter Pills text
+        // Filter Pills text
         updatePillsCount(summary);
 
-        // Render Document Viewer with quotes
+        // Document Viewer
         renderDocumentViewer(rawText, findings);
 
-        // Render Finding Sections
+        // Finding Lists
         renderFindingLists(findings);
+    }
+
+    function renderComparisonTable(compTable) {
+        comparisonTableBody.innerHTML = '';
+        if (!compTable || compTable.length === 0) {
+            comparisonTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No comparison metrics extracted.</td></tr>';
+            return;
+        }
+
+        compTable.forEach(row => {
+            const tr = document.createElement('tr');
+            let tagClass = 'tag-compliant';
+            if (row.status === 'DEVIATION') tagClass = 'tag-deviation';
+            else if (row.status === 'MISSING') tagClass = 'tag-missing';
+            else if (row.status === 'FORBIDDEN') tagClass = 'tag-forbidden';
+            else if (row.status === 'CONTRADICTION') tagClass = 'tag-contradiction';
+
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(row.parameter)}</strong></td>
+                <td>${escapeHtml(row.submitted_term)}</td>
+                <td>${escapeHtml(row.standard_policy)}</td>
+                <td><span class="status-tag ${tagClass}">${escapeHtml(row.status)}</span></td>
+            `;
+            comparisonTableBody.appendChild(tr);
+        });
     }
 
     function updatePillsCount(summary) {
         const total = (summary.forbidden_terms_count || 0) + (summary.deviations_count || 0) + (summary.missing_protections_count || 0) + (summary.contradictions_count || 0) + (summary.matches_count || 0);
-        filterPills.querySelector('[data-filter="all"]').textContent = `All (${total})`;
-        filterPills.querySelector('[data-filter="forbidden"]').textContent = `Forbidden (${summary.forbidden_terms_count || 0})`;
-        filterPills.querySelector('[data-filter="deviations"]').textContent = `Deviations (${summary.deviations_count || 0})`;
-        filterPills.querySelector('[data-filter="missing"]').textContent = `Missing (${summary.missing_protections_count || 0})`;
-        filterPills.querySelector('[data-filter="contradictions"]').textContent = `Contradictions (${summary.contradictions_count || 0})`;
-        filterPills.querySelector('[data-filter="matches"]').textContent = `Matches (${summary.matches_count || 0})`;
+        filterPills.querySelector('[data-filter="all"]').textContent = `ALL (${total})`;
+        filterPills.querySelector('[data-filter="forbidden"]').textContent = `FORBIDDEN (${summary.forbidden_terms_count || 0})`;
+        filterPills.querySelector('[data-filter="deviations"]').textContent = `DEVIATIONS (${summary.deviations_count || 0})`;
+        filterPills.querySelector('[data-filter="missing"]').textContent = `MISSING (${summary.missing_protections_count || 0})`;
+        filterPills.querySelector('[data-filter="contradictions"]').textContent = `CONTRADICTIONS (${summary.contradictions_count || 0})`;
+        filterPills.querySelector('[data-filter="matches"]').textContent = `MATCHES (${summary.matches_count || 0})`;
     }
 
-    // 8. Document Viewer Rendering with Quote Highlight Spans
+    // 9. Document Viewer Rendering with Quote Highlight Spans
     function renderDocumentViewer(rawText, findings) {
         docViewerBody.innerHTML = '';
 
-        // Extract all quotes to highlight
         const quotesToHighlight = [];
         (findings.forbidden_terms || []).forEach(f => f.clause_quote && quotesToHighlight.push({ quote: f.clause_quote, type: 'forbidden' }));
         (findings.deviations || []).forEach(d => d.clause_quote && quotesToHighlight.push({ quote: d.clause_quote, type: 'deviation' }));
@@ -322,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
         docViewerBody.innerHTML = formattedHtml;
     }
 
-    // 9. Finding Lists Rendering
+    // 10. Finding Lists Rendering & Clause Renegotiation Counter-Offer Cards
     function renderFindingLists(findings) {
         // Forbidden Terms
         const forbidden = findings.forbidden_terms || [];
@@ -337,6 +397,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="finding-explanation text-danger">
                         <strong>Forbidden Term Violation:</strong> ${escapeHtml(item.explanation)}
                     </div>
+                    ${item.suggested_renegotiation_clause ? `
+                        <div class="renegotiation-box">
+                            <span class="renegotiation-title">RECOMMENDED COUNTER-OFFER REPLACEMENT CLAUSE</span>
+                            <div class="renegotiation-text">${escapeHtml(item.suggested_renegotiation_clause)}</div>
+                            <button class="btn-copy-counter" data-counter="${escapeHtml(item.suggested_renegotiation_clause)}">COPY COUNTER-OFFER CLAUSE</button>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
         } else {
@@ -361,6 +428,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <strong>Standard Rule Violated:</strong> ${escapeHtml(item.standard_rule_violated)}
                         </div>
                     ` : ''}
+                    ${item.suggested_renegotiation_clause ? `
+                        <div class="renegotiation-box">
+                            <span class="renegotiation-title">RECOMMENDED COUNTER-OFFER REPLACEMENT CLAUSE</span>
+                            <div class="renegotiation-text">${escapeHtml(item.suggested_renegotiation_clause)}</div>
+                            <button class="btn-copy-counter" data-counter="${escapeHtml(item.suggested_renegotiation_clause)}">COPY COUNTER-OFFER CLAUSE</button>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
         } else {
@@ -383,6 +457,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="rule-citation">
                         <strong>Why It Matters:</strong> ${escapeHtml(item.why_it_matters)}
                     </div>
+                    ${item.suggested_renegotiation_clause ? `
+                        <div class="renegotiation-box">
+                            <span class="renegotiation-title">RECOMMENDED MANDATORY CLAUSE TO ADD</span>
+                            <div class="renegotiation-text">${escapeHtml(item.suggested_renegotiation_clause)}</div>
+                            <button class="btn-copy-counter" data-counter="${escapeHtml(item.suggested_renegotiation_clause)}">COPY CLAUSE TO ADD</button>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
         } else {
@@ -431,15 +512,30 @@ document.addEventListener('DOMContentLoaded', () => {
             sectionMatches.classList.add('hidden');
         }
 
-        // Wire click handler on finding cards to highlight quote in doc viewer
+        // Wire click handler on finding cards
         document.querySelectorAll('.finding-card').forEach(card => {
-            card.addEventListener('click', () => {
+            card.addEventListener('click', (e) => {
+                // Ignore copy button click
+                if (e.target.classList.contains('btn-copy-counter')) return;
+
                 document.querySelectorAll('.finding-card').forEach(c => c.classList.remove('active-finding'));
                 card.classList.add('active-finding');
 
                 const quoteText = card.getAttribute('data-quote');
                 if (quoteText) {
                     highlightQuoteInViewer(quoteText);
+                }
+            });
+        });
+
+        // Wire copy counter clause buttons
+        document.querySelectorAll('.btn-copy-counter').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const textToCopy = btn.getAttribute('data-counter');
+                if (textToCopy) {
+                    navigator.clipboard.writeText(textToCopy);
+                    showToast("Counter-offer replacement clause copied to clipboard!");
                 }
             });
         });
@@ -457,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 10. Filter Pills & Search Box
+    // 11. Filter Pills & Search Box
     filterPills.addEventListener('click', (e) => {
         if (!e.target.classList.contains('pill')) return;
         filterPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
