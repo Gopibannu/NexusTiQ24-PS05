@@ -365,42 +365,59 @@ Return ONLY valid raw JSON without markdown formatting.
                 resp_json = r.json()
                 text_out = resp_json["candidates"][0]["content"]["parts"][0]["text"]
                 clean_json = re.sub(r'^```json\s*|\s*```$', '', text_out.strip(), flags=re.MULTILINE)
-                parsed_res = json.loads(clean_json)
+                parsed_val = json.loads(clean_json)
+                if isinstance(parsed_val, list):
+                    if len(parsed_val) > 0 and isinstance(parsed_val[0], dict):
+                        parsed_res = parsed_val[0]
+                elif isinstance(parsed_val, dict):
+                    parsed_res = parsed_val
         except Exception as e:
             print(f"[Warning] Gemini API call exception: {e}. Falling back to deterministic engine.")
 
-    if not parsed_res:
+    if not isinstance(parsed_res, dict):
         parsed_res = det_res
 
     # --- DETERMINISTIC QUOTE VERIFICATION ---
     verified_matches = []
     for m in parsed_res.get("matches", []):
-        quote = m.get("clause_quote", "")
-        if is_quote_in_source(quote, lease_text):
-            verified_matches.append(m)
+        if isinstance(m, dict):
+            quote = m.get("clause_quote", "")
+            if is_quote_in_source(quote, lease_text):
+                verified_matches.append(m)
 
     verified_deviations = []
     for d in parsed_res.get("deviations", []):
-        quote = d.get("clause_quote", "")
-        if is_quote_in_source(quote, lease_text):
-            verified_deviations.append(d)
+        if isinstance(d, dict):
+            quote = d.get("clause_quote", "")
+            if is_quote_in_source(quote, lease_text):
+                verified_deviations.append(d)
 
     verified_forbidden = []
     for f in parsed_res.get("forbidden_terms", []):
-        quote = f.get("clause_quote", "")
-        if is_quote_in_source(quote, lease_text):
-            verified_forbidden.append(f)
+        if isinstance(f, dict):
+            quote = f.get("clause_quote", "")
+            if is_quote_in_source(quote, lease_text):
+                verified_forbidden.append(f)
 
     verified_contradictions = []
     for c in parsed_res.get("contradictions", []):
-        q1 = c.get("clause_quote_1", "")
-        q2 = c.get("clause_quote_2", "")
-        if is_quote_in_source(q1, lease_text) and is_quote_in_source(q2, lease_text):
-            verified_contradictions.append(c)
+        if isinstance(c, dict):
+            q1 = c.get("clause_quote_1", "")
+            q2 = c.get("clause_quote_2", "")
+            if is_quote_in_source(q1, lease_text) and is_quote_in_source(q2, lease_text):
+                verified_contradictions.append(c)
 
     missing_protections = parsed_res.get("missing_protections", [])
+    if not isinstance(missing_protections, list):
+        missing_protections = []
+
     plain_summary = parsed_res.get("plain_language_summary", det_res["plain_language_summary"])
+    if not isinstance(plain_summary, list):
+        plain_summary = det_res["plain_language_summary"]
+
     comparison_table = parsed_res.get("comparison_table", det_res.get("comparison_table", []))
+    if not isinstance(comparison_table, list):
+        comparison_table = det_res.get("comparison_table", [])
 
     # Fallback merge if LLM output missed findings present in deterministic rule output
     if not verified_deviations and det_res["deviations"]:
@@ -414,9 +431,9 @@ Return ONLY valid raw JSON without markdown formatting.
     if not comparison_table and det_res["comparison_table"]:
         comparison_table = det_res["comparison_table"]
 
-    verified_matches = [m for m in verified_matches if m.get("clause_quote")]
-    verified_deviations = [d for d in verified_deviations if d.get("clause_quote")]
-    verified_forbidden = [f for f in verified_forbidden if f.get("clause_quote")]
+    verified_matches = [m for m in verified_matches if isinstance(m, dict) and m.get("clause_quote")]
+    verified_deviations = [d for d in verified_deviations if isinstance(d, dict) and d.get("clause_quote")]
+    verified_forbidden = [f for f in verified_forbidden if isinstance(f, dict) and f.get("clause_quote")]
 
     financial_risk = 100 - (len(verified_deviations) * 30 + len(verified_forbidden) * 20)
     financial_risk = max(0, financial_risk)
