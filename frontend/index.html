@@ -7,7 +7,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,7 +21,13 @@
                     <p class="subtitle">Automated Clause-by-Clause RAG Review against Standard Positions — Track PS05</p>
                 </div>
             </div>
-            <div class="track-badge">TRACK_ID=PS05</div>
+            <div class="header-actions">
+                <a href="https://github.com/Gopibannu/NexusTiQ24-PS05.git" target="_blank" class="github-link">
+                    <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                    GitHub Repo
+                </a>
+                <div class="track-badge">TRACK_ID=PS05</div>
+            </div>
         </header>
 
         <!-- Main Layout -->
@@ -35,10 +41,10 @@
 
                 <!-- Sample Lease Selector -->
                 <div class="sample-lease-container">
-                    <label for="sampleLeaseSelect">⚡ Quick Test Sample Synthetic Leases:</label>
+                    <label for="sampleLeaseSelect">⚡ Select Synthetic Lease Scenario:</label>
                     <div class="select-wrapper">
                         <select id="sampleLeaseSelect">
-                            <option value="" disabled selected>Select a synthetic lease scenario...</option>
+                            <option value="" disabled selected>Loading synthetic lease scenarios...</option>
                         </select>
                     </div>
                 </div>
@@ -46,8 +52,8 @@
                 <!-- Text Area -->
                 <div class="input-group">
                     <div class="input-label-row">
-                        <label for="leaseTextInput">Paste Lease Agreement Text:</label>
-                        <button id="clearBtn" class="btn-text">Clear</button>
+                        <label for="leaseTextInput">Raw Contract Agreement Text:</label>
+                        <button id="clearBtn" class="btn-text">Clear Text</button>
                     </div>
                     <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or select a sample lease above..."></textarea>
                 </div>
@@ -57,8 +63,8 @@
                     <input type="file" id="fileInput" accept=".txt,.md,.doc,.docx">
                     <div class="dropzone-content">
                         <span class="upload-icon">📁</span>
-                        <p><strong>Click to upload</strong> or drag & drop lease text file</p>
-                        <span class="file-types">Supports .txt, .md text files</span>
+                        <p><strong>Click to upload</strong> or drag & drop text file</p>
+                        <span class="file-types">Supports .txt, .md files</span>
                     </div>
                 </div>
 
@@ -68,20 +74,20 @@
                 </button>
             </section>
 
-            <!-- Right Panel: Report Output -->
+            <!-- Right Panel: Report Output & Side-by-Side Inspector -->
             <section class="panel report-panel" id="reportPanel">
                 <!-- Initial Empty State -->
                 <div id="emptyState" class="state-container">
                     <div class="state-icon">📋</div>
                     <h3>No Analysis Run Yet</h3>
-                    <p>Select a sample lease or paste agreement text on the left, then click <strong>Run Automated Legal Review</strong> to view the structured report.</p>
+                    <p>Select a sample lease scenario on the left or paste agreement text, then click <strong>Run Automated Legal Review</strong> to generate the structured audit report.</p>
                 </div>
 
                 <!-- Loading State -->
                 <div id="loadingState" class="state-container hidden">
                     <div class="spinner"></div>
                     <h3>Reviewing Lease Agreement...</h3>
-                    <p>Performing clause-by-clause RAG vector retrieval, Gemini reasoning, and deterministic quote verification.</p>
+                    <p>Executing RAG vector retrieval (`gemini-embedding-001`), Gemini reasoning (`gemini-3.5-flash-lite`), and deterministic quote verification.</p>
                 </div>
 
                 <!-- Error State -->
@@ -94,96 +100,156 @@
 
                 <!-- Report Content (Populated via JS) -->
                 <div id="reportContent" class="report-content hidden">
-                    <!-- Status Banner -->
-                    <div id="statusBanner" class="status-banner">
-                        <div class="status-icon" id="bannerIcon"></div>
-                        <div class="status-info">
-                            <span class="status-label">COMPLIANCE REVIEW STATUS</span>
-                            <h2 id="bannerStatusText" class="status-title"></h2>
-                            <p id="bannerSubtext" class="status-subtext"></p>
+                    <!-- Status Banner & Toolbar -->
+                    <div class="report-top-bar">
+                        <div id="statusBanner" class="status-banner">
+                            <div class="status-icon" id="bannerIcon"></div>
+                            <div class="status-info">
+                                <span class="status-label">COMPLIANCE REVIEW STATUS</span>
+                                <h2 id="bannerStatusText" class="status-title"></h2>
+                                <p id="bannerSubtext" class="status-subtext"></p>
+                            </div>
+                            <div class="status-timer" id="processingTimer"></div>
                         </div>
-                        <div class="status-timer" id="processingTimer"></div>
+
+                        <!-- Action Toolbar -->
+                        <div class="action-toolbar">
+                            <button id="btnExportJson" class="tool-btn" title="Export structured JSON report">
+                                <span>📥</span> Export JSON
+                            </button>
+                            <button id="btnPrintReport" class="tool-btn" title="Print or save as PDF">
+                                <span>🖨️</span> Print / PDF
+                            </button>
+                            <button id="btnCopySummary" class="tool-btn" title="Copy plain-language summary to clipboard">
+                                <span>📋</span> Copy Summary
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Risk Meter & Metrics Dashboard -->
+                    <div class="risk-dashboard">
+                        <div class="risk-score-card">
+                            <div class="risk-score-header">
+                                <span>Compliance Score</span>
+                                <span id="riskScoreBadge" class="risk-badge">100 / 100</span>
+                            </div>
+                            <div class="risk-bar-container">
+                                <div id="riskBarFill" class="risk-bar-fill" style="width: 100%;"></div>
+                            </div>
+                            <p id="riskScoreSubtext" class="risk-score-subtext">Fully compliant lease document.</p>
+                        </div>
+
+                        <!-- Metrics Grid -->
+                        <div class="metrics-grid">
+                            <div class="metric-card metric-forbidden">
+                                <div class="metric-value" id="countForbidden">0</div>
+                                <div class="metric-label">Forbidden Terms</div>
+                            </div>
+                            <div class="metric-card metric-deviations">
+                                <div class="metric-value" id="countDeviations">0</div>
+                                <div class="metric-label">Deviations</div>
+                            </div>
+                            <div class="metric-card metric-missing">
+                                <div class="metric-value" id="countMissing">0</div>
+                                <div class="metric-label">Missing Protections</div>
+                            </div>
+                            <div class="metric-card metric-contradictions">
+                                <div class="metric-value" id="countContradictions">0</div>
+                                <div class="metric-label">Contradictions</div>
+                            </div>
+                            <div class="metric-card metric-matches">
+                                <div class="metric-value" id="countMatches">0</div>
+                                <div class="metric-label">Clean Matches</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Plain Language Summary -->
                     <div class="report-card summary-card">
                         <div class="card-header">
                             <h3>💡 Executive Plain-Language Summary</h3>
-                            <span class="card-subtitle">Key takeaways every signer must understand</span>
+                            <span class="card-subtitle">Key terms every signer must understand before executing</span>
                         </div>
                         <ul id="plainSummaryList" class="summary-list"></ul>
                     </div>
 
-                    <!-- Metrics Stats Counter -->
-                    <div class="metrics-grid">
-                        <div class="metric-card metric-forbidden">
-                            <div class="metric-value" id="countForbidden">0</div>
-                            <div class="metric-label">Forbidden Terms</div>
+                    <!-- Interactive Document & Findings Inspector -->
+                    <div class="inspector-tabs-row">
+                        <div class="filter-pills" id="filterPills">
+                            <button class="pill active" data-filter="all">All Findings</button>
+                            <button class="pill" data-filter="forbidden">Forbidden (0)</button>
+                            <button class="pill" data-filter="deviations">Deviations (0)</button>
+                            <button class="pill" data-filter="missing">Missing (0)</button>
+                            <button class="pill" data-filter="contradictions">Contradictions (0)</button>
+                            <button class="pill" data-filter="matches">Matches (0)</button>
                         </div>
-                        <div class="metric-card metric-deviations">
-                            <div class="metric-value" id="countDeviations">0</div>
-                            <div class="metric-label">Deviations</div>
-                        </div>
-                        <div class="metric-card metric-missing">
-                            <div class="metric-value" id="countMissing">0</div>
-                            <div class="metric-label">Missing Protections</div>
-                        </div>
-                        <div class="metric-card metric-contradictions">
-                            <div class="metric-value" id="countContradictions">0</div>
-                            <div class="metric-label">Contradictions</div>
-                        </div>
-                        <div class="metric-card metric-matches">
-                            <div class="metric-value" id="countMatches">0</div>
-                            <div class="metric-label">Clean Matches</div>
+                        <div class="search-box">
+                            <input type="text" id="findingSearchInput" placeholder="🔎 Search findings...">
                         </div>
                     </div>
 
-                    <!-- Finding Sections -->
-
-                    <!-- 1. Forbidden Terms -->
-                    <div id="sectionForbidden" class="finding-section hidden">
-                        <div class="section-title text-danger">
-                            <span>🚫 Forbidden Terms Found</span>
-                            <span class="badge badge-danger">Zero Tolerance</span>
+                    <!-- Interactive Split View: Document Viewer + Findings List -->
+                    <div class="split-inspector">
+                        <!-- Left Sub-panel: Quoted Source Inspector -->
+                        <div class="doc-viewer-card">
+                            <div class="doc-viewer-header">
+                                <span>📖 Interactive Source Document Viewer</span>
+                                <span class="doc-hint">Click any finding on the right to highlight quote snippet</span>
+                            </div>
+                            <div class="doc-viewer-body" id="docViewerBody">
+                                <!-- Rendered lease text with quote span anchors -->
+                            </div>
                         </div>
-                        <div id="forbiddenList" class="finding-list"></div>
+
+                        <!-- Right Sub-panel: Detailed Finding Cards -->
+                        <div class="findings-scroll-container">
+                            <!-- 1. Forbidden Terms -->
+                            <div id="sectionForbidden" class="finding-section">
+                                <div class="section-title text-danger">
+                                    <span>🚫 Forbidden Terms Found</span>
+                                    <span class="badge badge-danger">Zero Tolerance</span>
+                                </div>
+                                <div id="forbiddenList" class="finding-list"></div>
+                            </div>
+
+                            <!-- 2. Deviations -->
+                            <div id="sectionDeviations" class="finding-section">
+                                <div class="section-title text-warning">
+                                    <span>⚠️ Policy Deviations</span>
+                                    <span class="badge badge-warning">Out of Standard Range</span>
+                                </div>
+                                <div id="deviationsList" class="finding-list"></div>
+                            </div>
+
+                            <!-- 3. Missing Protections (Silence) -->
+                            <div id="sectionMissing" class="finding-section">
+                                <div class="section-title text-info">
+                                    <span>❓ Missing Protections (Silence Findings)</span>
+                                    <span class="badge badge-info">Required Clause Omitted</span>
+                                </div>
+                                <div id="missingList" class="finding-list"></div>
+                            </div>
+
+                            <!-- 4. Contradictions -->
+                            <div id="sectionContradictions" class="finding-section">
+                                <div class="section-title text-purple">
+                                    <span>⚡ Internal Clause Contradictions</span>
+                                    <span class="badge badge-purple">Conflicting Terms</span>
+                                </div>
+                                <div id="contradictionsList" class="finding-list"></div>
+                            </div>
+
+                            <!-- 5. Matches -->
+                            <div id="sectionMatches" class="finding-section">
+                                <div class="section-title text-success">
+                                    <span>✅ Compliant Standard Matches</span>
+                                    <span class="badge badge-success">Aligned with Policy</span>
+                                </div>
+                                <div id="matchesList" class="finding-list"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- 2. Deviations -->
-                    <div id="sectionDeviations" class="finding-section hidden">
-                        <div class="section-title text-warning">
-                            <span>⚠️ Policy Deviations</span>
-                            <span class="badge badge-warning">Out of Standard Range</span>
-                        </div>
-                        <div id="deviationsList" class="finding-list"></div>
-                    </div>
-
-                    <!-- 3. Missing Protections (Silence) -->
-                    <div id="sectionMissing" class="finding-section hidden">
-                        <div class="section-title text-info">
-                            <span>❓ Missing Protections (Silence Findings)</span>
-                            <span class="badge badge-info">Required Clause Omitted</span>
-                        </div>
-                        <div id="missingList" class="finding-list"></div>
-                    </div>
-
-                    <!-- 4. Contradictions -->
-                    <div id="sectionContradictions" class="finding-section hidden">
-                        <div class="section-title text-purple">
-                            <span>⚡ Internal Clause Contradictions</span>
-                            <span class="badge badge-purple">Conflicting Terms</span>
-                        </div>
-                        <div id="contradictionsList" class="finding-list"></div>
-                    </div>
-
-                    <!-- 5. Matches -->
-                    <div id="sectionMatches" class="finding-section hidden">
-                        <div class="section-title text-success">
-                            <span>✅ Compliant Standard Matches</span>
-                            <span class="badge badge-success">Aligned with Policy</span>
-                        </div>
-                        <div id="matchesList" class="finding-list"></div>
-                    </div>
                 </div>
             </section>
         </main>
@@ -192,6 +258,9 @@
             <p>NexusTiQ24 Hackathon Submission — Track PS05 — Lease Agreement Review Assistant | Gemini 3.5 Flash Lite + Gemini Embedding RAG Engine</p>
         </footer>
     </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
 
     <script src="script.js"></script>
 </body>
