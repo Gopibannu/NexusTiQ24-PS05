@@ -3,9 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lease Agreement Review Assistant</title>
+    <title>Lease Agreement Review Assistant | TRACK_ID=PS05</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Lease Agreement Review Assistant</h1>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon">⚖️</div>
+                <div>
+                    <h1>Lease Agreement Review Assistant</h1>
+                    <p class="subtitle">Automated Clause-by-Clause RAG Review against Standard Positions — Track PS05</p>
+                </div>
+            </div>
+            <div class="track-badge">TRACK_ID=PS05</div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="main-content">
+            <!-- Left Panel: Input & Sample Selector -->
+            <section class="panel input-panel">
+                <div class="panel-header">
+                    <h2>📄 Lease Document Input</h2>
+                    <span class="step-indicator">Step 1 of 2</span>
+                </div>
+
+                <!-- Sample Lease Selector -->
+                <div class="sample-lease-container">
+                    <label for="sampleLeaseSelect">⚡ Quick Test Sample Synthetic Leases:</label>
+                    <div class="select-wrapper">
+                        <select id="sampleLeaseSelect">
+                            <option value="" disabled selected>Select a synthetic lease scenario...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Text Area -->
+                <div class="input-group">
+                    <div class="input-label-row">
+                        <label for="leaseTextInput">Paste Lease Agreement Text:</label>
+                        <button id="clearBtn" class="btn-text">Clear</button>
+                    </div>
+                    <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or select a sample lease above..."></textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div class="upload-dropzone" id="dropzone">
+                    <input type="file" id="fileInput" accept=".txt,.md,.doc,.docx">
+                    <div class="dropzone-content">
+                        <span class="upload-icon">📁</span>
+                        <p><strong>Click to upload</strong> or drag & drop lease text file</p>
+                        <span class="file-types">Supports .txt, .md text files</span>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="analyzeBtn" class="btn-primary">
+                    <span class="btn-icon">🔍</span> Run Automated Legal Review
+                </button>
+            </section>
+
+            <!-- Right Panel: Report Output -->
+            <section class="panel report-panel" id="reportPanel">
+                <!-- Initial Empty State -->
+                <div id="emptyState" class="state-container">
+                    <div class="state-icon">📋</div>
+                    <h3>No Analysis Run Yet</h3>
+                    <p>Select a sample lease or paste agreement text on the left, then click <strong>Run Automated Legal Review</strong> to view the structured report.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="state-container hidden">
+                    <div class="spinner"></div>
+                    <h3>Reviewing Lease Agreement...</h3>
+                    <p>Performing clause-by-clause RAG vector retrieval, Gemini reasoning, and deterministic quote verification.</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="state-container hidden">
+                    <div class="state-icon error-icon">⚠️</div>
+                    <h3 id="errorTitle">Analysis Failed</h3>
+                    <p id="errorMessage">An error occurred while processing the lease text.</p>
+                    <button id="retryBtn" class="btn-secondary">Try Again</button>
+                </div>
+
+                <!-- Report Content (Populated via JS) -->
+                <div id="reportContent" class="report-content hidden">
+                    <!-- Status Banner -->
+                    <div id="statusBanner" class="status-banner">
+                        <div class="status-icon" id="bannerIcon"></div>
+                        <div class="status-info">
+                            <span class="status-label">COMPLIANCE REVIEW STATUS</span>
+                            <h2 id="bannerStatusText" class="status-title"></h2>
+                            <p id="bannerSubtext" class="status-subtext"></p>
+                        </div>
+                        <div class="status-timer" id="processingTimer"></div>
+                    </div>
+
+                    <!-- Plain Language Summary -->
+                    <div class="report-card summary-card">
+                        <div class="card-header">
+                            <h3>💡 Executive Plain-Language Summary</h3>
+                            <span class="card-subtitle">Key takeaways every signer must understand</span>
+                        </div>
+                        <ul id="plainSummaryList" class="summary-list"></ul>
+                    </div>
+
+                    <!-- Metrics Stats Counter -->
+                    <div class="metrics-grid">
+                        <div class="metric-card metric-forbidden">
+                            <div class="metric-value" id="countForbidden">0</div>
+                            <div class="metric-label">Forbidden Terms</div>
+                        </div>
+                        <div class="metric-card metric-deviations">
+                            <div class="metric-value" id="countDeviations">0</div>
+                            <div class="metric-label">Deviations</div>
+                        </div>
+                        <div class="metric-card metric-missing">
+                            <div class="metric-value" id="countMissing">0</div>
+                            <div class="metric-label">Missing Protections</div>
+                        </div>
+                        <div class="metric-card metric-contradictions">
+                            <div class="metric-value" id="countContradictions">0</div>
+                            <div class="metric-label">Contradictions</div>
+                        </div>
+                        <div class="metric-card metric-matches">
+                            <div class="metric-value" id="countMatches">0</div>
+                            <div class="metric-label">Clean Matches</div>
+                        </div>
+                    </div>
+
+                    <!-- Finding Sections -->
+
+                    <!-- 1. Forbidden Terms -->
+                    <div id="sectionForbidden" class="finding-section hidden">
+                        <div class="section-title text-danger">
+                            <span>🚫 Forbidden Terms Found</span>
+                            <span class="badge badge-danger">Zero Tolerance</span>
+                        </div>
+                        <div id="forbiddenList" class="finding-list"></div>
+                    </div>
+
+                    <!-- 2. Deviations -->
+                    <div id="sectionDeviations" class="finding-section hidden">
+                        <div class="section-title text-warning">
+                            <span>⚠️ Policy Deviations</span>
+                            <span class="badge badge-warning">Out of Standard Range</span>
+                        </div>
+                        <div id="deviationsList" class="finding-list"></div>
+                    </div>
+
+                    <!-- 3. Missing Protections (Silence) -->
+                    <div id="sectionMissing" class="finding-section hidden">
+                        <div class="section-title text-info">
+                            <span>❓ Missing Protections (Silence Findings)</span>
+                            <span class="badge badge-info">Required Clause Omitted</span>
+                        </div>
+                        <div id="missingList" class="finding-list"></div>
+                    </div>
+
+                    <!-- 4. Contradictions -->
+                    <div id="sectionContradictions" class="finding-section hidden">
+                        <div class="section-title text-purple">
+                            <span>⚡ Internal Clause Contradictions</span>
+                            <span class="badge badge-purple">Conflicting Terms</span>
+                        </div>
+                        <div id="contradictionsList" class="finding-list"></div>
+                    </div>
+
+                    <!-- 5. Matches -->
+                    <div id="sectionMatches" class="finding-section hidden">
+                        <div class="section-title text-success">
+                            <span>✅ Compliant Standard Matches</span>
+                            <span class="badge badge-success">Aligned with Policy</span>
+                        </div>
+                        <div id="matchesList" class="finding-list"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>NexusTiQ24 Hackathon Submission — Track PS05 — Lease Agreement Review Assistant | Gemini 3.5 Flash Lite + Gemini Embedding RAG Engine</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
