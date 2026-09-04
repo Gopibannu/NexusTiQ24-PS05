@@ -341,6 +341,9 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
         "plain_language_summary": plain_summary
     }
 
+# Cache store
+HASH_MEMORY_CACHE = {}
+
 def analyze_lease_agreement(lease_text: str, api_key: str = None) -> dict:
     start_time = time.time()
     lease_text_clean = lease_text.strip()
@@ -352,33 +355,28 @@ def analyze_lease_agreement(lease_text: str, api_key: str = None) -> dict:
         res_copy["processing_time_ms"] = int((time.time() - start_time) * 1000)
         return res_copy
 
-    # 2. Instant precomputed cache check for synthetic sample leases
-    norm_input = normalize_text(lease_text_clean)
-    for cache_name, cached_report in SAMPLE_REPORTS_CACHE.items():
-        if len(norm_input) > 50 and norm_input[:60] in normalize_text(json.dumps(cached_report)):
-            res_copy = dict(cached_report)
-            res_copy["processing_time_ms"] = int((time.time() - start_time) * 1000)
-            HASH_MEMORY_CACHE[text_hash] = res_copy
-            return res_copy
-
     if not api_key:
         api_key = os.environ.get("GEMINI_API_KEY", "").strip()
 
+    # 2. Live RAG Vector Search over Standard Position Rules
     rag_store = RAGStore()
-    std_rules = rag_store.get_all_rules()
+    relevant_rules = rag_store.search_relevant_rules(lease_text_clean, top_k=6, api_key=api_key)
+    if not relevant_rules:
+        relevant_rules = rag_store.get_all_rules()
 
     det_res = deterministic_rule_analysis(lease_text)
 
     parsed_res = None
+    engine_used = "deterministic_rules_fallback"
 
     if api_key:
         try:
-            rules_context = "\n".join([f"- [{r['id']}] {r['title']}: {r['content']}" for r in std_rules])
+            rules_context = "\n".join([f"- [{r['id']}] {r['title']} ({r.get('category', 'general')}): {r['content']}" for r in relevant_rules])
             
             prompt = f"""You are an expert legal contract analyst for a property management company.
 Review the following lease agreement against our standard property management positions.
 
-### STANDARD POSITIONS RULEBOOK:
+### RAG RETRIEVED STANDARD POSITIONS:
 {rules_context}
 
 ### RAW LEASE AGREEMENT TO REVIEW:
@@ -419,13 +417,17 @@ Return ONLY valid raw JSON without markdown formatting.
                 if isinstance(parsed_val, list):
                     if len(parsed_val) > 0 and isinstance(parsed_val[0], dict):
                         parsed_res = parsed_val[0]
+                        engine_used = "gemini-3.5-flash-lite + RAG vector search"
                 elif isinstance(parsed_val, dict):
                     parsed_res = parsed_val
+                    engine_used = "gemini-3.5-flash-lite + RAG vector search"
         except Exception as e:
             print(f"[Warning] Gemini API call exception: {e}. Falling back to deterministic engine.")
+            engine_used = "deterministic_rules_fallback"
 
     if not isinstance(parsed_res, dict):
         parsed_res = det_res
+        engine_used = "deterministic_rules_fallback"
 
     # --- DETERMINISTIC QUOTE VERIFICATION ---
     verified_matches = []
@@ -517,6 +519,10 @@ Return ONLY valid raw JSON without markdown formatting.
     final_dict = {
         "status": final_status,
         "is_clean": is_clean,
+        "engine_used": engine_used,
+        "rag_retrieval_applied": True,
+        "retrieved_rules_count": len(relevant_rules),
+        "retrieved_rule_ids": [r.get("id", "rule") for r in relevant_rules],
         "summary": {
             "matches_count": len(verified_matches),
             "deviations_count": len(verified_deviations),

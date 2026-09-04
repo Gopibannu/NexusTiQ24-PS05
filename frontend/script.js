@@ -386,7 +386,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ? 'Zero deviations, zero missing required clauses, and zero forbidden terms found. All clauses align with standard positions.' 
             : 'One or more deviations, missing required protections, forbidden terms, or contradictions were detected. Flagged for human review; final decision rests with legal reviewer.';
         
-        processingTimer.textContent = `Processed in ${(data.processing_time_ms / 1000).toFixed(2)}s`;
+        const engineName = data.engine_used || 'gemini-3.5-flash-lite + RAG vector search';
+        processingTimer.innerHTML = `<span style="display:block; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">ENGINE: ${escapeHtml(engineName)}</span>Processed in ${(data.processing_time_ms / 1000).toFixed(2)}s`;
 
         // Calculate Compliance Risk Score (100 max)
         let score = 100;
