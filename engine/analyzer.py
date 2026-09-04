@@ -14,11 +14,11 @@ NUMBER_WORDS = {
 
 def get_sentence_quote(text: str, pos_start: int, pos_end: int) -> str:
     start = pos_start
-    while start > 0 and text[start-1] not in ['\n', '.', ';']:
+    while start > 0 and text[start-1] not in ['\n', '\r', '.', ';']:
         start -= 1
     
     end = pos_end
-    while end < len(text) and text[end] not in ['\n', '.', ';']:
+    while end < len(text) and text[end] not in ['\n', '\r', '.', ';']:
         end += 1
     if end < len(text) and text[end] in ['.', ';']:
         end += 1
@@ -45,6 +45,16 @@ def is_quote_in_source(quote: str, source_text: str) -> bool:
 
     return False
 
+def get_lease_sentences(lease_text: str) -> list:
+    """Split lease text cleanly by lines, newlines, and sentence boundary periods."""
+    raw_chunks = re.split(r'[\r\n;\.]+', lease_text)
+    cleaned = []
+    for c in raw_chunks:
+        s = c.strip()
+        if len(s) >= 10:
+            cleaned.append(s)
+    return cleaned
+
 def deterministic_rule_analysis(lease_text: str) -> dict:
     matches = []
     deviations = []
@@ -54,6 +64,7 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
     comparison_table = []
 
     text_lower = lease_text.lower()
+    sentences = get_lease_sentences(lease_text)
 
     # 1. Security Deposit Range Analysis
     dep_match = re.search(r'(?:equal to|deposit of|sum of)?\s*(\d+(?:\.\d+)?|\b(?:one|two|three|four)(?:\s+and\s+a\s+half)?\b|\(\d+(?:\.\d+)?\))\s*months?[\'\s]*rent', text_lower)
@@ -100,31 +111,23 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
                 })
 
     # 2. Termination Notice Period & Contradictions Analysis
-    notice_sentences = []
-    for line in lease_text.split('\n'):
-        line_clean = line.strip()
-        if not line_clean:
-            continue
-        line_lower = line_clean.lower()
-        if ("notice" in line_lower or "vacate" in line_lower or "notification" in line_lower) and ("terminate" in line_lower or "non-renewal" in line_lower or "vacate" in line_lower or "expiration" in line_lower):
-            if "entry" not in line_lower and "refund of" not in line_lower and "return of" not in line_lower:
-                notice_sentences.append(line_clean)
-
     notice_findings = []
-    for s in notice_sentences:
+    for s in sentences:
         s_lower = s.lower()
-        d_match = re.search(r'(\b\d+\b|\b(?:fifteen|thirty|forty-five|sixty|ninety)\b|\(\d+\))\s*(?:calendar\s*)?days', s_lower)
-        if d_match:
-            val_str = d_match.group(1).strip('()').lower()
-            val = NUMBER_WORDS.get(val_str)
-            if not val:
-                try:
-                    val = int(val_str)
-                except ValueError:
-                    pass
-            if val and val > 0:
-                if not any(f["quote"] == s for f in notice_findings):
-                    notice_findings.append({"val": int(val), "quote": s})
+        if ("notice" in s_lower or "vacate" in s_lower or "notification" in s_lower) and ("terminate" in s_lower or "non-renewal" in s_lower or "vacate" in s_lower or "expiration" in s_lower):
+            if "entry" not in s_lower and "refund of" not in s_lower and "return of" not in s_lower:
+                d_match = re.search(r'(\b\d+\b|\b(?:fifteen|thirty|forty-five|sixty|ninety)\b|\(\d+\))\s*(?:calendar\s*)?days', s_lower)
+                if d_match:
+                    val_str = d_match.group(1).strip('()').lower()
+                    val = NUMBER_WORDS.get(val_str)
+                    if not val:
+                        try:
+                            val = int(val_str)
+                        except ValueError:
+                            pass
+                    if val and val > 0:
+                        if not any(f["quote"] == s for f in notice_findings):
+                            notice_findings.append({"val": int(val), "quote": s})
 
     if len(notice_findings) >= 2 and len(set(f["val"] for f in notice_findings)) > 1:
         f1 = notice_findings[0]
@@ -171,12 +174,12 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
 
     # 3. Required Protection: Maintenance Responsibility
     has_maint = False
-    for line in lease_text.split('\n'):
-        l_lower = line.lower()
+    for s in sentences:
+        l_lower = s.lower()
         if ("landlord" in l_lower or "lessor" in l_lower or "management" in l_lower) and ("maintain" in l_lower or "repair" in l_lower or "duties" in l_lower or "responsible" in l_lower or "keep" in l_lower):
             if any(k in l_lower for k in ["hvac", "structural", "plumbing", "heating", "cooling", "roof", "electrical", "utilities"]):
                 has_maint = True
-                quote = line.strip()
+                quote = s
                 matches.append({
                     "clause_quote": quote,
                     "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
@@ -204,13 +207,13 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
 
     # 4. Required Protection: Return of Security Deposit Timeline
     has_dep_ret = False
-    for line in lease_text.split('\n'):
-        l_lower = line.lower()
+    for s in sentences:
+        l_lower = s.lower()
         if "deposit" in l_lower and ("refund" in l_lower or "return" in l_lower or "disburse" in l_lower or "pay back" in l_lower):
             d_match = re.search(r'(\b\d+\b|\b(?:twenty-one|twenty-five|thirty|forty-five)\b|\(\d+\))\s*(?:calendar\s*)?days', l_lower)
             if d_match:
                 has_dep_ret = True
-                quote = line.strip()
+                quote = s
                 val_str = d_match.group(1).strip('()').lower()
                 days_val = NUMBER_WORDS.get(val_str)
                 if not days_val:
@@ -259,7 +262,7 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
         })
 
     # 5. Forbidden Terms Analysis
-    auto_ren_match = re.search(r'automatically renew[^\.\n]*?(without|no notice|no right to cancel)', text_lower)
+    auto_ren_match = re.search(r'automatically renew[^\.\r\n]*?(without|no notice|no right to cancel)', text_lower)
     if auto_ren_match:
         quote = get_sentence_quote(lease_text, auto_ren_match.start(), auto_ren_match.end())
         forbidden_terms.append({
@@ -274,7 +277,7 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
             "status": "FORBIDDEN"
         })
 
-    waiver_match = re.search(r'waive[^\.\n]*?(right to withhold rent|withhold rent)', text_lower)
+    waiver_match = re.search(r'waive[^\.\r\n]*?(right to withhold rent|withhold rent)', text_lower)
     if waiver_match:
         quote = get_sentence_quote(lease_text, waiver_match.start(), waiver_match.end())
         forbidden_terms.append({
@@ -293,7 +296,7 @@ def deterministic_rule_analysis(lease_text: str) -> dict:
         "Base monthly rent payment schedule and security deposit obligations.",
         "Required written notice period for non-renewal or lease termination.",
         "Landlord structural and utility system maintenance duties.",
-        "Security deposit return timeframe and itemized deduction rules."
+        "Security deposit refund timeframe and itemized deduction rules."
     ]
 
     return {
@@ -415,7 +418,6 @@ Return ONLY valid raw JSON without markdown formatting.
     verified_deviations = [d for d in verified_deviations if d.get("clause_quote")]
     verified_forbidden = [f for f in verified_forbidden if f.get("clause_quote")]
 
-    # Multi-dimensional risk score calculations
     financial_risk = 100 - (len(verified_deviations) * 30 + len(verified_forbidden) * 20)
     financial_risk = max(0, financial_risk)
 
