@@ -10,3 +10,5 @@ env/
 .DS_Store
 .env
 data/sample_lease_test.*
+
+.vercel

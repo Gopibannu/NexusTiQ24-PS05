@@ -8,7 +8,7 @@ An enterprise-grade, deterministic LegalTech lease clause review system built fo
 
 ## Live Deployment & GitHub Repository
 
-- **Live Web Application (Vercel)**: [https://nexustiq24-ps05.vercel.app](https://nexustiq24-ps05.vercel.app)
+- **Live Web Application (Vercel)**: [https://nexustiq.vercel.app](https://nexustiq.vercel.app)
 - **GitHub Repository**: [https://github.com/Gopibannu/NexusTiQ24-PS05.git](https://github.com/Gopibannu/NexusTiQ24-PS05.git)
 
 ---

@@ -1198,6 +1198,138 @@ textarea:focus {
     margin-top: 20px;
 }
 
+/* Comprehensive Responsive Design Media Queries */
+
+@media (max-width: 1024px) {
+    .app-container {
+        padding: 14px;
+        gap: 14px;
+    }
+    
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .split-inspector {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .brand {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .brand h1 {
+        font-size: 18px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-outline, .github-link, .track-badge {
+        font-size: 10.5px;
+        padding: 5px 10px;
+    }
+
+    .status-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    .status-title {
+        font-size: 17px;
+    }
+
+    .action-toolbar {
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 6px;
+    }
+
+    .tool-btn {
+        flex: 1 1 calc(50% - 6px);
+        text-align: center;
+        padding: 8px 10px;
+        font-size: 10.5px;
+    }
+
+    .multi-risk-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .metric-value {
+        font-size: 18px;
+    }
+
+    .inspector-tabs-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .filter-pills {
+        overflow-x: auto;
+        padding-bottom: 4px;
+        width: 100%;
+    }
+
+    .pill {
+        white-space: nowrap;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .search-box input {
+        width: 100%;
+    }
+
+    .doc-viewer-card, .findings-scroll-container {
+        height: 400px;
+    }
+
+    textarea {
+        height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tool-btn {
+        flex: 1 1 100%;
+    }
+
+    .modal-card {
+        max-height: 90vh;
+        margin: 10px;
+    }
+}
+
 /* Print CSS */
 @media print {
     body { background: #fff; color: #000; }
