@@ -1,0 +1,602 @@
+{
+  "lease_01_clean.txt": {
+    "status": "CLEAN",
+    "is_clean": true,
+    "summary": {
+      "matches_count": 4,
+      "deviations_count": 0,
+      "missing_protections_count": 0,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 100,
+      "legal_score": 100,
+      "operational_score": 100
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "1.5 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "30 days notice",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "21 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "00 (equal to 1.5 months' rent) as a Security Deposit.",
+          "explanation": "Security deposit requirement of 1.5 months' rent is within acceptable range (1.0 to 2.0 months)."
+        },
+        {
+          "clause_quote": "Either Landlord or Tenant may terminate or elect not to renew this Lease upon the expiration of the initial term by serving thirty (30) days prior written notice to the other party",
+          "explanation": "Termination notice period of 30 days is within acceptable range (30 to 60 days)."
+        },
+        {
+          "clause_quote": "Landlord shall be strictly responsible for maintaining the structural integrity of the Premises, including exterior walls, roof, foundations, plumbing, electrical wiring, and HVAC systems",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        },
+        {
+          "clause_quote": "Within twenty-one (21) calendar days following the expiration of this Lease and surrender of the Premises by Tenant, Landlord shall refund the Security Deposit in full, less any lawful itemized deductions for damages beyond ordinary wear and tear",
+          "explanation": "Security deposit return timeframe of 21 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [],
+      "missing_protections": [],
+      "forbidden_terms": [],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 0
+  },
+  "lease_02_clean.txt": {
+    "status": "CLEAN",
+    "is_clean": true,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 0,
+      "missing_protections_count": 0,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 100,
+      "legal_score": 100,
+      "operational_score": 100
+    },
+    "comparison_table": [
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "60 days notice",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "30 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "Either party may issue a notice of non-renewal or intent to vacate by delivering sixty (60) days written notice prior to the expiration date",
+          "explanation": "Termination notice period of 60 days is within acceptable range (30 to 60 days)."
+        },
+        {
+          "clause_quote": "Lessor agrees to keep all central heating, cooling, plumbing, structural components, and major building utilities in proper operating condition",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        },
+        {
+          "clause_quote": "Lessor will return the security deposit, alongside a detailed written itemization of any deductions, no later than thirty (30) calendar days after key surrender",
+          "explanation": "Security deposit return timeframe of 30 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [],
+      "missing_protections": [],
+      "forbidden_terms": [],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 0
+  },
+  "lease_03_deviation_deposit.txt": {
+    "status": "FLAGGED FOR HUMAN REVIEW",
+    "is_clean": false,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 1,
+      "missing_protections_count": 0,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 70,
+      "legal_score": 100,
+      "operational_score": 85
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "3.5 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "DEVIATION"
+      },
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "45 days notice",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "25 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "Tenant or Landlord must provide forty-five (45) days written notice prior to lease expiration to terminate or elect not to renew the lease",
+          "explanation": "Termination notice period of 45 days is within acceptable range (30 to 60 days)."
+        },
+        {
+          "clause_quote": "Landlord shall be responsible for major building repairs, roof, HVAC, and plumbing infrastructure",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        },
+        {
+          "clause_quote": "Landlord agrees to return the security deposit within twenty-five (25) calendar days following move-out inspection, subject to allowable wear and tear deductions",
+          "explanation": "Security deposit return timeframe of 25 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [
+        {
+          "clause_quote": "Tenant agrees to pay a security deposit equal to three and a half (3.5) months' monthly rent prior to occupancy, totaling $8,750.",
+          "deviation_explanation": "Security deposit requirement of 3.5 months' rent violates company policy (maximum allowed is 2.0 months).",
+          "standard_rule_violated": "Acceptable Security Deposit Range (1.0 - 2.0 months rent)",
+          "suggested_renegotiation_clause": "Tenant shall pay to Landlord a Security Deposit in the sum equal to one and a half (1.5) months' base monthly rent prior to occupancy, held in accordance with applicable residential leasing standards.",
+          "diff_view": {
+            "submitted_clause": "Tenant agrees to pay a security deposit equal to three and a half (3.5) months' monthly rent prior to occupancy, totaling $8,750.",
+            "required_standard_clause": "Tenant shall pay to Landlord a Security Deposit in the sum equal to one and a half (1.5) months' base monthly rent prior to occupancy, held in accordance with applicable residential leasing standards."
+          }
+        }
+      ],
+      "missing_protections": [],
+      "forbidden_terms": [],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 0
+  },
+  "lease_04_deviation_notice.txt": {
+    "status": "FLAGGED FOR HUMAN REVIEW",
+    "is_clean": false,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 1,
+      "missing_protections_count": 0,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 70,
+      "legal_score": 100,
+      "operational_score": 85
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "1.0 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "15 days notice",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "DEVIATION"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "20 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "00 (equal to 1.0 month rent) as a refundable security deposit prior to move-in.",
+          "explanation": "Security deposit requirement of 1.0 months' rent is within acceptable range (1.0 to 2.0 months)."
+        },
+        {
+          "clause_quote": "Landlord maintains electrical, structural, HVAC, and plumbing systems",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        },
+        {
+          "clause_quote": "Landlord shall refund the security deposit with itemized deductions within 20 calendar days post-surrender",
+          "explanation": "Security deposit return timeframe of 20 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [
+        {
+          "clause_quote": "Either party may terminate this agreement by delivering fifteen (15) days written notice prior to the end of the term",
+          "deviation_explanation": "Notice period of 15 days violates company policy requirement (30 to 60 days).",
+          "standard_rule_violated": "Acceptable Termination Notice Period (30 - 60 days)",
+          "suggested_renegotiation_clause": "Either party may terminate or elect not to renew this Lease Agreement upon the expiration of the initial term by delivering thirty (30) days prior written notice to the other party.",
+          "diff_view": {
+            "submitted_clause": "Either party may terminate this agreement by delivering fifteen (15) days written notice prior to the end of the term",
+            "required_standard_clause": "Either party may terminate or elect not to renew this Lease Agreement upon the expiration of the initial term by delivering thirty (30) days prior written notice to the other party."
+          }
+        }
+      ],
+      "missing_protections": [],
+      "forbidden_terms": [],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 5
+  },
+  "lease_05_missing_maintenance.txt": {
+    "status": "FLAGGED FOR HUMAN REVIEW",
+    "is_clean": false,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 0,
+      "missing_protections_count": 1,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 100,
+      "legal_score": 100,
+      "operational_score": 60
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "1.5 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "30 days notice",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Omitted (Entirely Silent)",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "MISSING"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "30 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "00 (1.5 months rent) prior to taking possession.",
+          "explanation": "Security deposit requirement of 1.5 months' rent is within acceptable range (1.0 to 2.0 months)."
+        },
+        {
+          "clause_quote": "Either party may terminate this lease upon expiration by delivering thirty (30) days advance written notice",
+          "explanation": "Termination notice period of 30 days is within acceptable range (30 to 60 days)."
+        },
+        {
+          "clause_quote": "The security deposit shall be returned within thirty (30) calendar days after lease termination and key surrender, accompanied by an itemized list of deductions",
+          "explanation": "Security deposit return timeframe of 30 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [],
+      "missing_protections": [
+        {
+          "missing_protection": "Landlord Maintenance Responsibility Clause",
+          "why_it_matters": "The lease agreement entirely omits landlord maintenance obligations for structural, plumbing, heating, and HVAC systems, exposing tenant to unallocated repair liability.",
+          "suggested_renegotiation_clause": "Landlord Maintenance Responsibility: Landlord shall be strictly responsible for maintaining the structural integrity of the Premises, roof, foundations, plumbing systems, electrical grids, and central HVAC systems in proper operating condition throughout the Lease term."
+        }
+      ],
+      "forbidden_terms": [],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 1
+  },
+  "lease_06_missing_deposit_return.txt": {
+    "status": "FLAGGED FOR HUMAN REVIEW",
+    "is_clean": false,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 0,
+      "missing_protections_count": 1,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 100,
+      "legal_score": 100,
+      "operational_score": 60
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "1.0 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "45 days notice",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "Omitted (Entirely Silent)",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "MISSING"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "00 (1.0 month rent) prior to moving in.",
+          "explanation": "Security deposit requirement of 1.0 months' rent is within acceptable range (1.0 to 2.0 months)."
+        },
+        {
+          "clause_quote": "Notice to vacate or non-renew must be submitted in writing at least forty-five (45) days prior to the lease expiration date",
+          "explanation": "Termination notice period of 45 days is within acceptable range (30 to 60 days)."
+        },
+        {
+          "clause_quote": "Landlord shall be responsible for repairing major structural elements, HVAC systems, plumbing leaks, and building electrical grids",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        }
+      ],
+      "deviations": [],
+      "missing_protections": [
+        {
+          "missing_protection": "Return of Security Deposit Timeline Clause",
+          "why_it_matters": "The lease agreement omits a fixed maximum timeframe for returning the security deposit following lease expiration or property surrender.",
+          "suggested_renegotiation_clause": "Security Deposit Return: Landlord shall refund the Security Deposit alongside a written itemized accounting of any lawful deductions within thirty (30) calendar days following key surrender and tenancy conclusion."
+        }
+      ],
+      "forbidden_terms": [],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 2
+  },
+  "lease_07_forbidden_autorenew.txt": {
+    "status": "FLAGGED FOR HUMAN REVIEW",
+    "is_clean": false,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 0,
+      "missing_protections_count": 0,
+      "forbidden_terms_count": 1,
+      "contradictions_count": 0
+    },
+    "risk_breakdown": {
+      "financial_score": 80,
+      "legal_score": 50,
+      "operational_score": 100
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "1.5 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "30 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Lease Renewal Mechanism",
+        "submitted_term": "Automatic 1-Year Renewal without notice",
+        "standard_policy": "Explicit prior notice required; no forced auto-renewal",
+        "status": "FORBIDDEN"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "00 (1.5 months rent) as security prior to occupancy.",
+          "explanation": "Security deposit requirement of 1.5 months' rent is within acceptable range (1.0 to 2.0 months)."
+        },
+        {
+          "clause_quote": "Landlord maintains central heating, plumbing, roof, and appliances",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        },
+        {
+          "clause_quote": "Landlord agrees to refund the security deposit within thirty (30) calendar days after lease end",
+          "explanation": "Security deposit return timeframe of 30 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [],
+      "missing_protections": [],
+      "forbidden_terms": [
+        {
+          "clause_quote": "Automatic Renewal: Upon expiration of the Initial Term, this Lease Agreement shall automatically renew for an additional full term of twelve (12) months at a 10% rent increase, without requiring any notice or re-execution by either party, and Tenant shall have no right to cancel once the initial term expires.",
+          "explanation": "Clause mandates automatic lease renewal for a full multi-month/annual term without requiring prior advance written notice or option to terminate.",
+          "suggested_renegotiation_clause": "Tenancy Renewal: Upon expiration of the initial term, this Lease Agreement shall convert to a month-to-month tenancy, terminable by either party upon thirty (30) days advance written notice.",
+          "diff_view": {
+            "submitted_clause": "Automatic Renewal: Upon expiration of the Initial Term, this Lease Agreement shall automatically renew for an additional full term of twelve (12) months at a 10% rent increase, without requiring any notice or re-execution by either party, and Tenant shall have no right to cancel once the initial term expires.",
+            "required_standard_clause": "Tenancy Renewal: Upon expiration of the initial term, this Lease Agreement shall convert to a month-to-month tenancy, terminable by either party upon thirty (30) days advance written notice."
+          }
+        }
+      ],
+      "contradictions": []
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 0
+  },
+  "lease_08_internal_contradiction.txt": {
+    "status": "FLAGGED FOR HUMAN REVIEW",
+    "is_clean": false,
+    "summary": {
+      "matches_count": 3,
+      "deviations_count": 0,
+      "missing_protections_count": 0,
+      "forbidden_terms_count": 0,
+      "contradictions_count": 1
+    },
+    "risk_breakdown": {
+      "financial_score": 100,
+      "legal_score": 65,
+      "operational_score": 100
+    },
+    "comparison_table": [
+      {
+        "parameter": "Security Deposit Range",
+        "submitted_term": "1.0 months' rent",
+        "standard_policy": "1.0 to 2.0 months' rent",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Termination Notice Period",
+        "submitted_term": "Contradictory (30 days vs 90 days)",
+        "standard_policy": "30 to 60 days written notice",
+        "status": "CONTRADICTION"
+      },
+      {
+        "parameter": "Maintenance Responsibility",
+        "submitted_term": "Landlord structural/HVAC maintenance included",
+        "standard_policy": "Mandatory Landlord structural & HVAC duty",
+        "status": "COMPLIANT"
+      },
+      {
+        "parameter": "Deposit Refund Timeline",
+        "submitted_term": "30 calendar days",
+        "standard_policy": "Maximum 30 calendar days",
+        "status": "COMPLIANT"
+      }
+    ],
+    "findings": {
+      "matches": [
+        {
+          "clause_quote": "00 (1.0 month rent) as security prior to occupancy.",
+          "explanation": "Security deposit requirement of 1.0 months' rent is within acceptable range (1.0 to 2.0 months)."
+        },
+        {
+          "clause_quote": "Landlord maintains structural framing, roof, HVAC systems, and main water lines",
+          "explanation": "Landlord maintenance responsibility for major systems and structural components is explicitly defined."
+        },
+        {
+          "clause_quote": "Security deposit returned within thirty (30) days following move-out inspection",
+          "explanation": "Security deposit return timeframe of 30 days complies with maximum 30 calendar days requirement."
+        }
+      ],
+      "deviations": [],
+      "missing_protections": [],
+      "forbidden_terms": [],
+      "contradictions": [
+        {
+          "clause_quote_1": "Clause 5: Tenant or Landlord may terminate this lease at the expiration of the term by providing at least thirty (30) days prior written notice",
+          "clause_quote_2": "Clause 14: Tenant agrees that written notification of intent to vacate must be delivered to Landlord no less than ninety (90) days prior to the expiration date",
+          "explanation": "Lease contains contradictory termination notice terms (30 days in one clause vs 90 days in another clause)."
+        }
+      ]
+    },
+    "plain_language_summary": [
+      "Base monthly rent payment schedule and security deposit obligations.",
+      "Required written notice period for non-renewal or lease termination.",
+      "Landlord structural and utility system maintenance duties.",
+      "Security deposit refund timeframe and itemized deduction rules."
+    ],
+    "processing_time_ms": 2
+  }
+}

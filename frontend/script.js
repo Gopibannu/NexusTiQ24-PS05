@@ -22,12 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const bannerSubtext = document.getElementById('bannerSubtext');
     const processingTimer = document.getElementById('processingTimer');
 
+    const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+    const btnExportAddendum = document.getElementById('btnExportAddendum');
     const btnExportJson = document.getElementById('btnExportJson');
     const btnPrintReport = document.getElementById('btnPrintReport');
     const btnCopySummary = document.getElementById('btnCopySummary');
     const btnOpenPolicy = document.getElementById('btnOpenPolicy');
     const btnClosePolicy = document.getElementById('btnClosePolicy');
     const policyModal = document.getElementById('policyModal');
+    const policySearchInput = document.getElementById('policySearchInput');
 
     const riskScoreBadge = document.getElementById('riskScoreBadge');
     const riskBarFill = document.getElementById('riskBarFill');
@@ -175,9 +178,102 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === policyModal) policyModal.classList.add('hidden');
     });
 
+    if (policySearchInput) {
+        policySearchInput.addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase().trim();
+            document.querySelectorAll('.policy-rule-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (!q || text.includes(q)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+
     // 6. Toolbar Actions
     analyzeBtn.addEventListener('click', runReview);
     retryBtn.addEventListener('click', runReview);
+
+    if (btnDownloadPdf) {
+        btnDownloadPdf.addEventListener('click', () => {
+            if (!currentReportData) return;
+            const element = document.getElementById('reportContent');
+            showToast("Generating PDF legal audit certificate...");
+            const opt = {
+                margin:       0.3,
+                filename:     `lease_audit_certificate_${Date.now()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            if (window.html2pdf) {
+                window.html2pdf().set(opt).from(element).save().then(() => {
+                    showToast("PDF audit certificate downloaded!");
+                }).catch(err => {
+                    console.error("PDF Export error:", err);
+                    window.print();
+                });
+            } else {
+                window.print();
+            }
+        });
+    }
+
+    if (btnExportAddendum) {
+        btnExportAddendum.addEventListener('click', () => {
+            if (!currentReportData) return;
+            const findings = currentReportData.findings || {};
+            const timestamp = new Date().toISOString().split('T')[0];
+            
+            let addendumText = `================================================================================\n`;
+            addendumText += `           LEASE AGREEMENT AMENDMENT & RE-NEGOTIATION ADDENDUM\n`;
+            addendumText += `================================================================================\n`;
+            addendumText += `Date: ${timestamp}\n`;
+            addendumText += `Track Reference: PS05 | Compliance Status: ${currentReportData.status}\n\n`;
+            addendumText += `This Legal Addendum amends and modifies the Lease Agreement submitted for review.\n`;
+            addendumText += `The following counter-offer replacement and mandatory clauses are hereby incorporated:\n\n`;
+            addendumText += `--------------------------------------------------------------------------------\n`;
+            addendumText += `1. PROPOSED REPLACEMENT & ADDITIONAL MANDATORY CLAUSES:\n`;
+            addendumText += `--------------------------------------------------------------------------------\n\n`;
+
+            let clauseIdx = 1;
+            const allItems = [
+                ...(findings.forbidden_terms || []).map(f => ({ type: 'FORBIDDEN TERM REPLACEMENT', text: f.suggested_renegotiation_clause })),
+                ...(findings.deviations || []).map(d => ({ type: 'POLICY DEVIATION CORRECTION', text: d.suggested_renegotiation_clause })),
+                ...(findings.missing_protections || []).map(m => ({ type: 'MISSING MANDATORY PROTECTION', text: m.suggested_renegotiation_clause }))
+            ].filter(item => item.text);
+
+            if (allItems.length === 0) {
+                addendumText += `[No renegotiation clauses required. Lease agreement is fully compliant with standard positions.]\n\n`;
+            } else {
+                allItems.forEach(item => {
+                    addendumText += `[CLAUSE ${clauseIdx}] (${item.type})\n`;
+                    addendumText += `${item.text}\n\n`;
+                    clauseIdx++;
+                });
+            }
+
+            addendumText += `--------------------------------------------------------------------------------\n`;
+            addendumText += `2. SIGNATURE & ACKNOWLEDGMENT BLOCK:\n`;
+            addendumText += `--------------------------------------------------------------------------------\n\n`;
+            addendumText += `LANDLORD / LESSOR:                            TENANT / LESSEE:\n\n`;
+            addendumText += `Signature: __________________________        Signature: __________________________\n`;
+            addendumText += `Name:      __________________________        Name:      __________________________\n`;
+            addendumText += `Date:      __________________________        Date:      __________________________\n\n`;
+            addendumText += `================================================================================\n`;
+
+            const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(addendumText);
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `lease_amendment_addendum_${Date.now()}.txt`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Lease Amendment Addendum (.txt) downloaded!");
+        });
+    }
 
     btnExportJson.addEventListener('click', () => {
         if (!currentReportData) return;

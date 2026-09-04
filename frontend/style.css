@@ -540,6 +540,17 @@ textarea:focus {
     color: var(--primary-blue);
 }
 
+.tool-btn.btn-highlight {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+.tool-btn.btn-highlight:hover {
+    background: var(--primary-blue);
+    color: #000;
+}
+
 /* Risk Dashboard */
 .risk-dashboard {
     display: flex;
@@ -673,6 +684,47 @@ textarea:focus {
 .metric-missing .metric-value { color: var(--color-info); }
 .metric-contradictions .metric-value { color: var(--color-purple); }
 .metric-matches .metric-value { color: var(--color-clean); }
+
+/* Visual Clause Diff Viewer */
+.diff-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+}
+
+.diff-header {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.diff-submitted {
+    background: rgba(244, 63, 94, 0.15);
+    color: #fca5a5;
+    border-left: 3px solid var(--color-danger);
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-decoration: line-through;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.diff-standard {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border-left: 3px solid var(--color-clean);
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
 
 /* Report Card & Comparison Table */
 .report-card {
@@ -987,7 +1039,6 @@ textarea:focus {
     border: 1px dashed var(--border-color);
 }
 
-/* Renegotiation Clause Counter-Offer Box */
 .renegotiation-box {
     background: rgba(56, 189, 248, 0.05);
     border: 1px solid rgba(56, 189, 248, 0.2);
@@ -1033,7 +1084,7 @@ textarea:focus {
     color: #000;
 }
 
-/* Slide-out Policy Rulebook Modal */
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;

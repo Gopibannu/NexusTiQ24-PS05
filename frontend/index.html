@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- html2pdf.js library for direct client-side PDF certificate export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -96,7 +98,7 @@
                     <button id="retryBtn" class="btn-secondary">TRY AGAIN</button>
                 </div>
 
-                <!-- Report Content -->
+                <!-- Report Content (Print/PDF Target) -->
                 <div id="reportContent" class="report-content hidden">
                     <!-- Status Banner & Toolbar -->
                     <div class="report-top-bar">
@@ -111,8 +113,10 @@
 
                         <!-- Action Toolbar -->
                         <div class="action-toolbar">
+                            <button id="btnDownloadPdf" class="tool-btn btn-highlight" title="Download formal PDF legal audit certificate">DOWNLOAD AUDIT PDF</button>
+                            <button id="btnExportAddendum" class="tool-btn btn-highlight" title="Export drafted renegotiation lease amendment addendum">EXPORT ADDENDUM (.TXT)</button>
                             <button id="btnExportJson" class="tool-btn" title="Export structured JSON report">EXPORT JSON</button>
-                            <button id="btnPrintReport" class="tool-btn" title="Print or save as PDF">PRINT / PDF</button>
+                            <button id="btnPrintReport" class="tool-btn" title="Print page">PRINT</button>
                             <button id="btnCopySummary" class="tool-btn" title="Copy plain-language summary to clipboard">COPY SUMMARY</button>
                         </div>
                     </div>
@@ -300,6 +304,7 @@
                 <button id="btnClosePolicy" class="btn-text">CLOSE</button>
             </div>
             <div class="modal-body" id="policyModalBody">
+                <input type="text" id="policySearchInput" placeholder="SEARCH POLICY RULEBOOK..." style="width: 100%; padding: 10px 14px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase;">
                 <div class="policy-rule-card">
                     <span class="rule-cat">DEPOSIT RANGE POLICY</span>
                     <h3>1. Acceptable Security Deposit Range</h3>
