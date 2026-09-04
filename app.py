@@ -64,6 +64,8 @@ def list_sample_leases():
         return jsonify([])
 
     leases = [
+        {"id": "sample_best_lease.txt", "name": "Model Best Lease — 100% Compliant (Ideal)", "expected": "CLEAN"},
+        {"id": "sample_worst_lease.txt", "name": "Worst Case Lease — Multi-Violation & High Risk", "expected": "FLAGGED"},
         {"id": "lease_01_clean.txt", "name": "Lease 1 — Clean / Fully Compliant", "expected": "CLEAN"},
         {"id": "lease_02_clean.txt", "name": "Lease 2 — Clean (Alternate Wording)", "expected": "CLEAN"},
         {"id": "lease_03_deviation_deposit.txt", "name": "Lease 3 — Deviation: Deposit 3.5 Months", "expected": "FLAGGED"},
