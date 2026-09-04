@@ -6,6 +6,13 @@ An enterprise-grade, deterministic LegalTech lease clause review system built fo
 
 ---
 
+## Live Deployment & GitHub Repository
+
+- **Live Web Application (Vercel)**: [https://nexustiq24-ps05.vercel.app](https://nexustiq24-ps05.vercel.app)
+- **GitHub Repository**: [https://github.com/Gopibannu/NexusTiQ24-PS05.git](https://github.com/Gopibannu/NexusTiQ24-PS05.git)
+
+---
+
 ## Key Highlights & Standout Features
 
 1. **Multi-Format Document Ingestion**:
@@ -32,7 +39,7 @@ An enterprise-grade, deterministic LegalTech lease clause review system built fo
 
 ---
 
-## Quick Start (Single Server Command)
+## Quick Start (Local Server Execution)
 
 1. **Install Dependencies**:
    ```bash
@@ -44,6 +51,15 @@ An enterprise-grade, deterministic LegalTech lease clause review system built fo
    python app.py
    ```
    Open **http://localhost:8000** in your browser.
+
+---
+
+## Deploying on Vercel
+
+1. Import repository `https://github.com/Gopibannu/NexusTiQ24-PS05.git` on Vercel ([vercel.com/new](https://vercel.com/new)).
+2. Add Environment Variable:
+   - `GEMINI_API_KEY`: Your Gemini API key.
+3. Click **Deploy**. Vercel will build serverless functions automatically using `vercel.json` and `api/index.py`.
 
 ---
 
