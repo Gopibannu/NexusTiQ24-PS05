@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentReportData = null;
     let currentRawText = '';
     let currentFilter = 'all';
+    let uploadedFileObject = null;
 
     // 1. Fetch sample leases on startup
     fetchSampleLeases();
@@ -102,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const leaseId = e.target.value;
         if (!leaseId) return;
 
+        uploadedFileObject = null;
         try {
             const res = await fetch(`/api/leases/${leaseId}`);
             if (res.ok) {
@@ -117,13 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
     clearBtn.addEventListener('click', () => {
         leaseTextInput.value = '';
         sampleLeaseSelect.selectedIndex = 0;
+        uploadedFileObject = null;
         showState('empty');
     });
 
-    // 4. File Drag & Drop / Upload
+    // 4. File Drag & Drop / Upload (TXT, MD, PDF, DOCX)
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (file) readFileContent(file);
+        if (file) handleSelectedFile(file);
     });
 
     dropzone.addEventListener('dragover', (e) => {
@@ -139,15 +142,28 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         dropzone.classList.remove('dragover');
         if (e.dataTransfer.files.length > 0) {
-            readFileContent(e.dataTransfer.files[0]);
+            handleSelectedFile(e.dataTransfer.files[0]);
         }
     });
+
+    function handleSelectedFile(file) {
+        uploadedFileObject = file;
+        sampleLeaseSelect.selectedIndex = 0;
+
+        const nameLower = file.name.toLowerCase();
+        if (nameLower.endsWith('.pdf') || nameLower.endsWith('.docx') || nameLower.endsWith('.doc')) {
+            leaseTextInput.value = `[Document File Loaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)]\nClick 'RUN AUTOMATED LEGAL REVIEW' to parse and analyze text from this document.`;
+            showToast(`Loaded ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
+        } else {
+            readFileContent(file);
+        }
+    }
 
     function readFileContent(file) {
         const reader = new FileReader();
         reader.onload = (evt) => {
             leaseTextInput.value = evt.target.result;
-            sampleLeaseSelect.selectedIndex = 0;
+            showToast(`Loaded ${file.name}`);
         };
         reader.readAsText(file);
     }
@@ -189,20 +205,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7. Run Review Request
     async function runReview() {
         const text = leaseTextInput.value.trim();
-        if (!text || text.length < 30) {
-            showError("Input Too Short", "Please paste or select a valid lease agreement text (at least 30 characters).");
+        
+        if (!uploadedFileObject && (!text || text.length < 30)) {
+            showError("Input Too Short", "Please paste lease text or upload a valid document file (.txt, .md, .pdf, .docx).");
             return;
         }
 
-        currentRawText = text;
         showState('loading');
 
         try {
-            const res = await fetch('/api/review', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lease_text: text })
-            });
+            let res;
+            if (uploadedFileObject && text.includes('[Document File Loaded:')) {
+                // Send FormData for PDF/DOCX file upload
+                const formData = new FormData();
+                formData.append('file', uploadedFileObject);
+                res = await fetch('/api/review', {
+                    method: 'POST',
+                    body: formData
+                });
+            } else {
+                // Send JSON payload
+                res = await fetch('/api/review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lease_text: text })
+                });
+            }
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
@@ -211,7 +239,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await res.json();
             currentReportData = data;
-            renderReport(data, text);
+            
+            // Extract raw text for Document Viewer
+            if (uploadedFileObject && text.includes('[Document File Loaded:')) {
+                currentRawText = `[Parsed from uploaded file: ${uploadedFileObject.name}]\n` + (data.findings?.matches?.[0]?.clause_quote || data.findings?.deviations?.[0]?.clause_quote || text);
+            } else {
+                currentRawText = text;
+            }
+
+            renderReport(data, currentRawText);
             showState('report');
         } catch (err) {
             console.error("Review request failed:", err);
@@ -515,7 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Wire click handler on finding cards
         document.querySelectorAll('.finding-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                // Ignore copy button click
                 if (e.target.classList.contains('btn-copy-counter')) return;
 
                 document.querySelectorAll('.finding-card').forEach(c => c.classList.remove('active-finding'));

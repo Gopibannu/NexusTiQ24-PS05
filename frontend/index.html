@@ -53,16 +53,16 @@
                         <label for="leaseTextInput">RAW CONTRACT AGREEMENT TEXT:</label>
                         <button id="clearBtn" class="btn-text">CLEAR TEXT</button>
                     </div>
-                    <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or select a sample lease scenario above..."></textarea>
+                    <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or upload a document file (.txt, .md, .pdf, .docx) below..."></textarea>
                 </div>
 
                 <!-- File Upload -->
                 <div class="upload-dropzone" id="dropzone">
-                    <input type="file" id="fileInput" accept=".txt,.md,.doc,.docx">
+                    <input type="file" id="fileInput" accept=".txt,.md,.pdf,.doc,.docx">
                     <div class="dropzone-content">
-                        <span class="dropzone-title">UPLOAD FILE</span>
-                        <p>Click to upload or drag & drop text file</p>
-                        <span class="file-types">Supports .txt, .md text files</span>
+                        <span class="dropzone-title">UPLOAD DOCUMENT FILE</span>
+                        <p>Click to upload or drag & drop text/pdf/doc file</p>
+                        <span class="file-types">Supports .txt, .md, .pdf, .docx files</span>
                     </div>
                 </div>
 
@@ -78,7 +78,7 @@
                 <div id="emptyState" class="state-container">
                     <div class="state-badge">AWAITING INPUT</div>
                     <h3>No Analysis Run Yet</h3>
-                    <p>Select a synthetic lease scenario on the left or paste contract text, then click <strong>RUN AUTOMATED LEGAL REVIEW</strong> to generate the structured audit report.</p>
+                    <p>Select a synthetic lease scenario on the left, upload a contract file (.txt, .md, .pdf, .docx), or paste agreement text, then click <strong>RUN AUTOMATED LEGAL REVIEW</strong> to generate the structured audit report.</p>
                 </div>
 
                 <!-- Loading State -->

@@ -1,4 +1,5 @@
 import os
+import io
 import json
 import traceback
 from flask import Flask, jsonify, request, send_from_directory
@@ -11,6 +12,37 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='frontend', static_url_path='')
 
+def extract_text_from_file(file_storage) -> str:
+    """Extract text from uploaded .txt, .md, .pdf, or .docx file."""
+    filename = file_storage.filename.lower()
+    content_bytes = file_storage.read()
+
+    # 1. PDF File Extraction
+    if filename.endswith('.pdf'):
+        try:
+            import pypdf
+            reader = pypdf.PdfReader(io.BytesIO(content_bytes))
+            text_pages = [page.extract_text() for page in reader.pages if page.extract_text()]
+            return "\n".join(text_pages).strip()
+        except Exception as e:
+            print("[PDF Extractor Error]:", e)
+
+    # 2. DOCX File Extraction
+    if filename.endswith('.docx') or filename.endswith('.doc'):
+        try:
+            import docx
+            doc = docx.Document(io.BytesIO(content_bytes))
+            paragraphs = [p.text for p in doc.paragraphs if p.text]
+            return "\n".join(paragraphs).strip()
+        except Exception as e:
+            print("[DOCX Extractor Error]:", e)
+
+    # 3. Plain Text / Markdown / Fallback
+    try:
+        return content_bytes.decode('utf-8', errors='ignore').strip()
+    except Exception as e:
+        return str(content_bytes)
+
 @app.route('/')
 def serve_index():
     return send_from_directory('frontend', 'index.html')
@@ -20,7 +52,8 @@ def health():
     return jsonify({
         "status": "ok",
         "track": "PS05",
-        "index_rules_loaded": len(rag_instance.get_all_rules())
+        "index_rules_loaded": len(rag_instance.get_all_rules()),
+        "supported_file_types": [".txt", ".md", ".pdf", ".docx", ".doc"]
     })
 
 @app.route('/api/leases', methods=['GET'])
@@ -40,15 +73,25 @@ def list_sample_leases():
         {"id": "lease_07_forbidden_autorenew.txt", "name": "Lease 7 — Forbidden Auto-Renewal Clause", "expected": "FLAGGED"},
         {"id": "lease_08_internal_contradiction.txt", "name": "Lease 8 — Internal Contradiction (30 vs 90 days)", "expected": "FLAGGED"}
     ]
+
+    # Include test sample files if available
+    sample_test_path = os.path.join(os.path.dirname(__file__), 'data', 'sample_lease_test.txt')
+    if os.path.exists(sample_test_path):
+        leases.append({"id": "sample_lease_test.txt", "name": "Sample Test Lease (Multi-Violation)", "expected": "FLAGGED"})
+
     return jsonify(leases)
 
 @app.route('/api/leases/<lease_id>', methods=['GET'])
 def get_sample_lease_content(lease_id):
     """Endpoint returning text content of a specific sample lease."""
-    # Sanitize filename
     safe_name = os.path.basename(lease_id)
-    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data', 'leases'))
-    file_path = os.path.join(data_dir, safe_name)
+    
+    # Check data/leases/ first, then data/
+    data_leases_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data', 'leases'))
+    file_path = os.path.join(data_leases_dir, safe_name)
+    if not os.path.exists(file_path):
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data'))
+        file_path = os.path.join(data_dir, safe_name)
 
     if not os.path.exists(file_path):
         return jsonify({"error": "Sample lease file not found"}), 404
@@ -60,25 +103,27 @@ def get_sample_lease_content(lease_id):
 
 @app.route('/api/review', methods=['POST'])
 def review_lease():
-    """Main REST endpoint to review a lease agreement."""
+    """Main REST endpoint to review a lease agreement (text, json, or file upload)."""
     try:
         lease_text = ""
         
-        # Check JSON payload
-        if request.is_json and request.json:
+        # 1. File Upload (TXT, MD, PDF, DOCX)
+        if 'file' in request.files:
+            file_storage = request.files['file']
+            lease_text = extract_text_from_file(file_storage)
+
+        # 2. JSON payload
+        elif request.is_json and request.json:
             lease_text = request.json.get("lease_text", "")
-        # Check Form / File upload
+
+        # 3. Form payload
         elif request.form:
             lease_text = request.form.get("lease_text", "")
-        
-        if not lease_text and 'file' in request.files:
-            file = request.files['file']
-            lease_text = file.read().decode('utf-8', errors='ignore')
 
         lease_text = lease_text.strip()
         if not lease_text or len(lease_text) < 30:
             return jsonify({
-                "error": "Malformed or empty request. Please provide a valid lease agreement text (minimum 30 characters)."
+                "error": "Malformed or empty request. Please provide a valid lease agreement text or file (minimum 30 characters)."
             }), 400
 
         # Run analysis pipeline
@@ -88,7 +133,7 @@ def review_lease():
     except Exception as e:
         traceback.print_exc()
         return jsonify({
-            "error": "Model analysis call failed or timed out. Please check input text or try again.",
+            "error": "Model analysis call failed or timed out. Please check input text/file or try again.",
             "details": str(e)
         }), 500
 
