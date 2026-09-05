@@ -10,7 +10,10 @@ from engine.rag import rag_instance
 
 load_dotenv()
 
-app = Flask(__name__, static_folder='frontend', static_url_path='')
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+
+app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path='')
 
 def extract_text_from_file(file_storage) -> str:
     """Extract text from uploaded .txt, .md, .pdf, or .docx file."""
@@ -45,7 +48,7 @@ def extract_text_from_file(file_storage) -> str:
 
 @app.route('/')
 def serve_index():
-    return send_from_directory('frontend', 'index.html')
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 @app.route('/favicon.ico')
 def favicon():
