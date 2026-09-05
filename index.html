@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS LEGAL — Command Center & Lease Review Assistant | PS05</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- html2pdf.js library for direct client-side PDF certificate export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="theme-dark">
+    <div class="command-center-layout">
+        <!-- Left Navigation Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-title">NEXUS LEGAL</span>
+                    <span class="brand-sub">COMMAND CENTER</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="javascript:void(0)" id="navItemReview" class="nav-item active">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Contract Review</span>
+                </a>
+                <a href="javascript:void(0)" id="navItemHistory" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Audit History Log</span>
+                </a>
+                <a href="javascript:void(0)" id="navItemAnalytics" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>Data Analytics</span>
+                </a>
+                <a href="javascript:void(0)" id="navBtnPolicy" class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <span>Policy Rulebook</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="engine-badge">
+                    <span class="status-pulse"></span>
+                    <div class="engine-text">
+                        <span class="engine-title">RAG VECTOR ENGINE</span>
+                        <span class="engine-status">ONLINE • PS05</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="brand">
+                    <div class="logo-badge">NEXUS LEGAL</div>
+                    <div>
+                        <h1>Lease Agreement Review Assistant</h1>
+                        <p class="subtitle">Automated Clause-by-Clause RAG Review against Standard Positions — Track PS05</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button id="btnThemeToggle" class="btn-theme-toggle" title="Switch between Light and Dark themes">
+                        <span id="themeToggleIcon">🌙</span> <span id="themeToggleText">MIDNIGHT DARK</span>
+                    </button>
+                    <button id="btnOpenPolicy" class="btn-outline">POLICY RULEBOOK</button>
+                    <a href="https://nexustiq.vercel.app" target="_blank" class="vercel-link">VERCEL APP</a>
+                    <a href="https://github.com/Gopibannu/NexusTiQ24-PS05.git" target="_blank" class="github-link">GITHUB REPO</a>
+                    <div class="track-badge">TRACK_ID=PS05</div>
+                </div>
+            </header>
+
+            <!-- View Tab Switcher Bar -->
+            <div class="view-tab-bar">
+                <button id="tabBtnReview" class="view-tab active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>CONTRACT REVIEW</span>
+                </button>
+                <button id="tabBtnHistory" class="view-tab">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>AUDIT HISTORY LOG</span>
+                    <span id="historyBadgeCount" class="tab-badge">0</span>
+                </button>
+                <button id="tabBtnAnalytics" class="view-tab">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>DATA ANALYTICS DASHBOARD</span>
+                </button>
+            </div>
+
+            <!-- VIEW 1: Contract Review Workspace -->
+            <div id="viewContractReview" class="workspace-view active">
+                <main class="main-content">
+                    <!-- Left Panel: Input & Sample Selector -->
+                    <section class="panel input-panel" id="inputPanel">
+                        <div class="panel-header">
+                            <h2>LEASE DOCUMENT INPUT</h2>
+                            <span class="step-indicator">STEP 1 OF 2</span>
+                        </div>
+
+                        <!-- Sample Lease Selector -->
+                        <div class="sample-lease-container">
+                            <label for="sampleLeaseSelect">SELECT SYNTHETIC LEASE SCENARIO:</label>
+                            <div class="select-wrapper">
+                                <select id="sampleLeaseSelect">
+                                    <option value="" disabled selected>Loading synthetic lease scenarios...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Text Area -->
+                        <div class="input-group">
+                            <div class="input-label-row">
+                                <label for="leaseTextInput">RAW CONTRACT AGREEMENT TEXT:</label>
+                                <button id="clearBtn" class="btn-text">CLEAR TEXT</button>
+                            </div>
+                            <textarea id="leaseTextInput" placeholder="Paste full lease agreement contract text here, or upload a document file (.txt, .md, .pdf, .docx) below..."></textarea>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="upload-dropzone" id="dropzone">
+                            <input type="file" id="fileInput" accept=".txt,.md,.pdf,.doc,.docx">
+                            <div class="dropzone-content">
+                                <svg class="drop-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <span class="dropzone-title">UPLOAD DOCUMENT FILE</span>
+                                <p>Click to upload or drag & drop text/pdf/doc file</p>
+                                <span class="file-types">Supports .txt, .md, .pdf, .docx files</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button id="analyzeBtn" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            RUN AUTOMATED LEGAL REVIEW
+                        </button>
+                    </section>
+
+                    <!-- Right Panel: Report Output -->
+                    <section class="panel report-panel" id="reportPanel">
+                        <!-- Initial Empty State -->
+                        <div id="emptyState" class="state-container">
+                            <div class="state-badge">AWAITING INPUT</div>
+                            <h3>No Analysis Run Yet</h3>
+                            <p>Select a synthetic lease scenario on the left, upload a contract file (.txt, .md, .pdf, .docx), or paste agreement text, then click <strong>RUN AUTOMATED LEGAL REVIEW</strong> to generate the structured audit report.</p>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="loadingState" class="state-container hidden">
+                            <div class="spinner"></div>
+                            <h3>REVIEWING LEASE AGREEMENT</h3>
+                            <p>Executing RAG vector retrieval (gemini-embedding-001), Gemini reasoning (gemini-3.5-flash-lite), and deterministic quote verification.</p>
+                        </div>
+
+                        <!-- Error State -->
+                        <div id="errorState" class="state-container hidden">
+                            <div class="state-badge badge-error">ANALYSIS FAILED</div>
+                            <h3 id="errorTitle">Analysis Request Failed</h3>
+                            <p id="errorMessage">An error occurred while processing the lease text.</p>
+                            <button id="retryBtn" class="btn-secondary">TRY AGAIN</button>
+                        </div>
+
+                        <!-- Report Content (Print/PDF Target) -->
+                        <div id="reportContent" class="report-content hidden">
+                            <!-- Status Banner & Toolbar -->
+                            <div class="report-top-bar">
+                                <div id="statusBanner" class="status-banner">
+                                    <div class="status-info">
+                                        <span class="status-label">COMPLIANCE REVIEW STATUS</span>
+                                        <h2 id="bannerStatusText" class="status-title"></h2>
+                                        <p id="bannerSubtext" class="status-subtext"></p>
+                                    </div>
+                                    <div class="status-timer" id="processingTimer"></div>
+                                </div>
+
+                                <!-- Action Toolbar -->
+                                <div class="action-toolbar">
+                                    <button id="btnDownloadPdf" class="tool-btn btn-highlight" title="Download formal PDF legal audit certificate">DOWNLOAD AUDIT PDF</button>
+                                    <button id="btnExportAddendum" class="tool-btn btn-highlight" title="Export drafted renegotiation lease amendment addendum">EXPORT ADDENDUM (.TXT)</button>
+                                    <button id="btnExportJson" class="tool-btn" title="Export structured JSON report">EXPORT JSON</button>
+                                    <button id="btnPrintReport" class="tool-btn" title="Print page">PRINT</button>
+                                    <button id="btnCopySummary" class="tool-btn" title="Copy plain-language summary to clipboard">COPY SUMMARY</button>
+                                </div>
+                            </div>
+
+                            <!-- Multi-Dimensional Risk Matrix & Overall Score -->
+                            <div class="risk-dashboard">
+                                <div class="risk-score-card">
+                                    <div class="risk-score-header">
+                                        <span>OVERALL COMPLIANCE SCORE</span>
+                                        <span id="riskScoreBadge" class="risk-badge">100 / 100</span>
+                                    </div>
+                                    <div class="risk-bar-container">
+                                        <div id="riskBarFill" class="risk-bar-fill" style="width: 100%;"></div>
+                                    </div>
+                                    <p id="riskScoreSubtext" class="risk-score-subtext">Fully compliant lease agreement.</p>
+                                </div>
+
+                                <!-- Multi-Dimensional Risk Breakdown Grid -->
+                                <div class="multi-risk-grid">
+                                    <div class="risk-dim-card">
+                                        <span class="risk-dim-title">FINANCIAL RISK</span>
+                                        <span id="financialScoreVal" class="risk-dim-val">100 / 100</span>
+                                        <div class="risk-dim-bar"><div id="financialBarFill" class="risk-dim-bar-fill" style="width: 100%;"></div></div>
+                                    </div>
+                                    <div class="risk-dim-card">
+                                        <span class="risk-dim-title">LEGAL LIABILITY RISK</span>
+                                        <span id="legalScoreVal" class="risk-dim-val">100 / 100</span>
+                                        <div class="risk-dim-bar"><div id="legalBarFill" class="risk-dim-bar-fill" style="width: 100%;"></div></div>
+                                    </div>
+                                    <div class="risk-dim-card">
+                                        <span class="risk-dim-title">OPERATIONAL RISK</span>
+                                        <span id="opScoreVal" class="risk-dim-val">100 / 100</span>
+                                        <div class="risk-dim-bar"><div id="opBarFill" class="risk-dim-bar-fill" style="width: 100%;"></div></div>
+                                    </div>
+                                </div>
+
+                                <!-- Summary Counts Grid -->
+                                <div class="metrics-grid">
+                                    <div class="metric-card metric-forbidden">
+                                        <div class="metric-value" id="countForbidden">0</div>
+                                        <div class="metric-label">FORBIDDEN TERMS</div>
+                                    </div>
+                                    <div class="metric-card metric-deviations">
+                                        <div class="metric-value" id="countDeviations">0</div>
+                                        <div class="metric-label">DEVIATIONS</div>
+                                    </div>
+                                    <div class="metric-card metric-missing">
+                                        <div class="metric-value" id="countMissing">0</div>
+                                        <div class="metric-label">MISSING PROTECTIONS</div>
+                                    </div>
+                                    <div class="metric-card metric-contradictions">
+                                        <div class="metric-value" id="countContradictions">0</div>
+                                        <div class="metric-label">CONTRADICTIONS</div>
+                                    </div>
+                                    <div class="metric-card metric-matches">
+                                        <div class="metric-value" id="countMatches">0</div>
+                                        <div class="metric-label">CLEAN MATCHES</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Side-by-Side Term Comparison Table -->
+                            <div class="report-card">
+                                <div class="card-header">
+                                    <h3>LEASE TERM VS. COMPANY STANDARD COMPARISON MATRIX</h3>
+                                    <span class="card-subtitle">Side-by-side term verification against standard positions</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="comparison-table">
+                                        <thead>
+                                            <tr>
+                                                <th>PARAMETER</th>
+                                                <th>SUBMITTED LEASE TERM</th>
+                                                <th>COMPANY STANDARD POSITION</th>
+                                                <th>AUDIT STATUS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="comparisonTableBody">
+                                            <!-- Populated via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Plain Language Summary -->
+                            <div class="report-card summary-card">
+                                <div class="card-header">
+                                    <h3>EXECUTIVE PLAIN-LANGUAGE SUMMARY</h3>
+                                    <span class="card-subtitle">Key terms every contract signer must understand</span>
+                                </div>
+                                <ul id="plainSummaryList" class="summary-list"></ul>
+                            </div>
+
+                            <!-- Inspector Filter & Search Bar -->
+                            <div class="inspector-tabs-row">
+                                <div class="filter-pills" id="filterPills">
+                                    <button class="pill active" data-filter="all">ALL FINDINGS</button>
+                                    <button class="pill" data-filter="forbidden">FORBIDDEN (0)</button>
+                                    <button class="pill" data-filter="deviations">DEVIATIONS (0)</button>
+                                    <button class="pill" data-filter="missing">MISSING (0)</button>
+                                    <button class="pill" data-filter="contradictions">CONTRADICTIONS (0)</button>
+                                    <button class="pill" data-filter="matches">MATCHES (0)</button>
+                                </div>
+                                <div class="search-box">
+                                    <input type="text" id="findingSearchInput" placeholder="SEARCH FINDINGS...">
+                                </div>
+                            </div>
+
+                            <!-- Split Inspector: Document Viewer + Findings List -->
+                            <div class="split-inspector">
+                                <!-- Left Sub-panel: Quoted Source Inspector -->
+                                <div class="doc-viewer-card">
+                                    <div class="doc-viewer-header">
+                                        <span>SOURCE DOCUMENT INSPECTOR</span>
+                                        <span class="doc-hint">Click finding card to highlight verbatim quote</span>
+                                    </div>
+                                    <div class="doc-viewer-body" id="docViewerBody">
+                                        <!-- Rendered lease text with quote anchors -->
+                                    </div>
+                                </div>
+
+                                <!-- Right Sub-panel: Detailed Finding Cards -->
+                                <div class="findings-scroll-container">
+                                    <!-- 1. Forbidden Terms -->
+                                    <div id="sectionForbidden" class="finding-section">
+                                        <div class="section-title text-danger">
+                                            <span>FORBIDDEN TERMS FOUND</span>
+                                            <span class="badge badge-danger">ZERO TOLERANCE</span>
+                                        </div>
+                                        <div id="forbiddenList" class="finding-list"></div>
+                                    </div>
+
+                                    <!-- 2. Deviations -->
+                                    <div id="sectionDeviations" class="finding-section">
+                                        <div class="section-title text-warning">
+                                            <span>POLICY DEVIATIONS</span>
+                                            <span class="badge badge-warning">OUT OF RANGE</span>
+                                        </div>
+                                        <div id="deviationsList" class="finding-list"></div>
+                                    </div>
+
+                                    <!-- 3. Missing Protections (Silence) -->
+                                    <div id="sectionMissing" class="finding-section">
+                                        <div class="section-title text-info">
+                                            <span>MISSING PROTECTIONS (SILENCE FINDINGS)</span>
+                                            <span class="badge badge-info">REQUIRED CLAUSE OMITTED</span>
+                                        </div>
+                                        <div id="missingList" class="finding-list"></div>
+                                    </div>
+
+                                    <!-- 4. Contradictions -->
+                                    <div id="sectionContradictions" class="finding-section">
+                                        <div class="section-title text-purple">
+                                            <span>INTERNAL CLAUSE CONTRADICTIONS</span>
+                                            <span class="badge badge-purple">CONFLICTING TERMS</span>
+                                        </div>
+                                        <div id="contradictionsList" class="finding-list"></div>
+                                    </div>
+
+                                    <!-- 5. Matches -->
+                                    <div id="sectionMatches" class="finding-section">
+                                        <div class="section-title text-success">
+                                            <span>COMPLIANT STANDARD MATCHES</span>
+                                            <span class="badge badge-success">ALIGNED WITH POLICY</span>
+                                        </div>
+                                        <div id="matchesList" class="finding-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+                </main>
+            </div>
+
+            <!-- VIEW 2: Audit History Log -->
+            <div id="viewHistory" class="workspace-view hidden">
+                <section class="panel history-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2>AUDIT & REVIEW HISTORY LEDGER</h2>
+                            <p class="view-subtitle">Chronological record of executed lease contract audits, compliance scores, and risk findings.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <div class="search-box">
+                                <input type="text" id="historySearchInput" placeholder="SEARCH HISTORY LOGS..." class="search-input">
+                            </div>
+                            <button id="btnClearHistory" class="btn-outline text-danger" title="Clear all stored audit history">CLEAR HISTORY</button>
+                        </div>
+                    </div>
+
+                    <!-- History KPI Summary Cards -->
+                    <div class="metrics-grid history-metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="histTotalAudits">0</div>
+                            <div class="metric-label">TOTAL AUDITS</div>
+                        </div>
+                        <div class="metric-card metric-matches">
+                            <div class="metric-value" id="histCleanCount">0</div>
+                            <div class="metric-label">FULLY COMPLIANT</div>
+                        </div>
+                        <div class="metric-card metric-forbidden">
+                            <div class="metric-value" id="histFlaggedCount">0</div>
+                            <div class="metric-label">FLAGGED / HIGH RISK</div>
+                        </div>
+                        <div class="metric-card metric-missing">
+                            <div class="metric-value" id="histAvgScore">0%</div>
+                            <div class="metric-label">AVG COMPLIANCE SCORE</div>
+                        </div>
+                    </div>
+
+                    <!-- History Log Table -->
+                    <div class="table-responsive history-table-wrapper">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>TIMESTAMP</th>
+                                    <th>LEASE CONTRACT TITLE</th>
+                                    <th>AUDIT STATUS</th>
+                                    <th>COMPLIANCE SCORE</th>
+                                    <th>FINDINGS BREAKDOWN</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                        <div id="historyEmptyMsg" class="empty-history-msg">
+                            <p>No historical audits recorded yet. Run a review in the <strong>Contract Review</strong> tab to log entries here!</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- VIEW 3: Data Analytics Dashboard -->
+            <div id="viewAnalytics" class="workspace-view hidden">
+                <section class="analytics-workspace">
+                    <div class="view-header">
+                        <div>
+                            <h2>PORTFOLIO DATA ANALYTICS DASHBOARD</h2>
+                            <p class="view-subtitle">Aggregate intelligence, risk severity distribution, and clause violation frequency analytics.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <span class="status-badge badge-success">LIVE TELEMETRY ACTIVE</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards Grid -->
+                    <div class="analytics-kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon icon-purple">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">TOTAL LEASES ANALYZED</span>
+                                <h3 id="analyticsTotalLeases" class="kpi-value">0</h3>
+                                <span class="kpi-subtext">Across synthetic & uploaded contracts</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon icon-clean">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">PORTFOLIO COMPLIANCE RATE</span>
+                                <h3 id="analyticsComplianceRate" class="kpi-value">0%</h3>
+                                <span class="kpi-subtext" id="analyticsCleanSubtext">0 of 0 contracts fully compliant</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon icon-danger">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">TOTAL CLAUSE VIOLATIONS</span>
+                                <h3 id="analyticsTotalViolations" class="kpi-value">0</h3>
+                                <span class="kpi-subtext" id="analyticsForbiddenSubtext">0 zero-tolerance forbidden terms</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon icon-cyan">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">AVERAGE COMPLIANCE SCORE</span>
+                                <h3 id="analyticsAvgScore" class="kpi-value">0 / 100</h3>
+                                <span class="kpi-subtext">Overall health index across portfolio</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Charts Grid -->
+                    <div class="analytics-charts-grid">
+                        <!-- Chart 1: Donut Chart Distribution -->
+                        <div class="panel chart-panel">
+                            <div class="card-header">
+                                <h3>PORTFOLIO COMPLIANCE RATIO</h3>
+                                <span class="card-subtitle">Clean vs. Flagged contract distribution</span>
+                            </div>
+                            <div class="chart-box">
+                                <div class="donut-chart-container">
+                                    <svg class="donut-svg" viewBox="0 0 36 36">
+                                        <path class="donut-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <path id="donutSegmentClean" class="donut-segment segment-clean" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    </svg>
+                                    <div class="donut-center-text">
+                                        <span id="donutCenterPct" class="donut-pct">0%</span>
+                                        <span class="donut-sub">CLEAN</span>
+                                    </div>
+                                </div>
+                                <div class="donut-legend">
+                                    <div class="legend-item"><span class="legend-dot dot-clean"></span><span id="legendCleanText">Clean Compliant: 0</span></div>
+                                    <div class="legend-item"><span class="legend-dot dot-flagged"></span><span id="legendFlaggedText">Flagged / Deviated: 0</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Top Clause Violation Frequencies -->
+                        <div class="panel chart-panel">
+                            <div class="card-header">
+                                <h3>MOST FREQUENT POLICY VIOLATIONS</h3>
+                                <span class="card-subtitle">Recurring deviations detected across audited leases</span>
+                            </div>
+                            <div class="violation-bars-list" id="violationBarsList">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Chart 3: Risk Dimension Breakdown -->
+                        <div class="panel chart-panel">
+                            <div class="card-header">
+                                <h3>RISK DIMENSION EXPOSURE MATRIX</h3>
+                                <span class="card-subtitle">Financial, Legal Liability, & Operational risk index</span>
+                            </div>
+                            <div class="risk-dims-breakdown">
+                                <div class="dim-gauge-card">
+                                    <div class="dim-gauge-header">
+                                        <span>FINANCIAL RISK DIMENSION</span>
+                                        <span id="dimGaugeFinancialVal" class="dim-gauge-score">100 / 100</span>
+                                    </div>
+                                    <div class="risk-bar-container"><div id="dimGaugeFinancialBar" class="risk-bar-fill fill-clean" style="width: 100%;"></div></div>
+                                    <span class="dim-gauge-desc">Deposit limits, mid-term rent lock, fee caps</span>
+                                </div>
+                                <div class="dim-gauge-card">
+                                    <div class="dim-gauge-header">
+                                        <span>LEGAL LIABILITY RISK DIMENSION</span>
+                                        <span id="dimGaugeLegalVal" class="dim-gauge-score">100 / 100</span>
+                                    </div>
+                                    <div class="risk-bar-container"><div id="dimGaugeLegalBar" class="risk-bar-fill fill-warning" style="width: 100%;"></div></div>
+                                    <span class="dim-gauge-desc">Notice periods, tenant right waivers, auto-renewal</span>
+                                </div>
+                                <div class="dim-gauge-card">
+                                    <div class="dim-gauge-header">
+                                        <span>OPERATIONAL RISK DIMENSION</span>
+                                        <span id="dimGaugeOpVal" class="dim-gauge-score">100 / 100</span>
+                                    </div>
+                                    <div class="risk-bar-container"><div id="dimGaugeOpBar" class="risk-bar-fill fill-info" style="width: 100%;"></div></div>
+                                    <span class="dim-gauge-desc">Maintenance responsibilities, 24h entry notice, refund timeline</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Automated Risk Insights -->
+                        <div class="panel chart-panel">
+                            <div class="card-header">
+                                <h3>AUTOMATED PORTFOLIO RISK INSIGHTS</h3>
+                                <span class="card-subtitle">Actionable recommendations derived from aggregate RAG findings</span>
+                            </div>
+                            <ul id="analyticsInsightsList" class="insights-list">
+                                <!-- Populated via JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="app-footer">
+                <p>NexusTiQ24 Submission — Track PS05 — Lease Agreement Review Assistant | Gemini 3.5 Flash Lite + Gemini Embedding RAG Engine</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Slide-Out Policy Rulebook Inspector Modal -->
+    <div id="policyModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>STANDARD POSITIONS POLICY RULEBOOK</h2>
+                <button id="btnClosePolicy" class="btn-text">CLOSE</button>
+            </div>
+            <div class="modal-body" id="policyModalBody">
+                <input type="text" id="policySearchInput" placeholder="SEARCH POLICY RULEBOOK..." style="width: 100%; padding: 10px 14px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase;">
+                <div class="policy-rule-card">
+                    <span class="rule-cat">DEPOSIT RANGE POLICY</span>
+                    <h3>1. Acceptable Security Deposit Range</h3>
+                    <p>Security deposit required must be between 1.0 month and 2.0 months of base monthly rent. Deposits exceeding 2.0 months are unacceptable deviations.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">NOTICE PERIOD POLICY</span>
+                    <h3>2. Acceptable Termination Notice Period</h3>
+                    <p>Written notice for lease termination or non-renewal must be between 30 days and 60 days. Periods shorter than 30 days or longer than 60 days are unacceptable deviations.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">REQUIRED PROTECTION</span>
+                    <h3>3. Maintenance Responsibility Clause</h3>
+                    <p>Landlord must be explicitly responsible for structural repairs, heating, plumbing, electrical grids, and central HVAC systems. Silence is a critical missing protection.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">REQUIRED PROTECTION</span>
+                    <h3>4. Return of Security Deposit Timeline</h3>
+                    <p>Security deposit refund with itemized accounting must be returned within a maximum of 30 calendar days post-surrender. Silence is a critical missing protection.</p>
+                </div>
+                <div class="policy-rule-card">
+                    <span class="rule-cat">ZERO TOLERANCE</span>
+                    <h3>5. Strictly Forbidden Terms</h3>
+                    <p>Automatic lease renewal without notice, waiver of tenant right to withhold rent, unilateral mid-term rent increases, and landlord entry without 24-hour advance notice.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
