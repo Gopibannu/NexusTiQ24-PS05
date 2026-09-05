@@ -398,29 +398,36 @@ CRITICAL RULE:
 
 Return ONLY valid raw JSON without markdown formatting.
 """
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={api_key}"
-            headers = {"Content-Type": "application/json"}
-            payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {
-                    "temperature": 0.1,
-                    "responseMimeType": "application/json"
+            models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+            for model_name in models_to_try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                headers = {"Content-Type": "application/json"}
+                payload = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "temperature": 0.1,
+                        "responseMimeType": "application/json"
+                    }
                 }
-            }
-            
-            r = requests.post(url, headers=headers, json=payload, timeout=45)
-            if r.status_code == 200:
-                resp_json = r.json()
-                text_out = resp_json["candidates"][0]["content"]["parts"][0]["text"]
-                clean_json = re.sub(r'^```json\s*|\s*```$', '', text_out.strip(), flags=re.MULTILINE)
-                parsed_val = json.loads(clean_json)
-                if isinstance(parsed_val, list):
-                    if len(parsed_val) > 0 and isinstance(parsed_val[0], dict):
-                        parsed_res = parsed_val[0]
-                        engine_used = "gemini-3.5-flash-lite + RAG vector search"
-                elif isinstance(parsed_val, dict):
-                    parsed_res = parsed_val
-                    engine_used = "gemini-3.5-flash-lite + RAG vector search"
+                
+                try:
+                    r = requests.post(url, headers=headers, json=payload, timeout=20)
+                    if r.status_code == 200:
+                        resp_json = r.json()
+                        text_out = resp_json["candidates"][0]["content"]["parts"][0]["text"]
+                        clean_json = re.sub(r'^```json\s*|\s*```$', '', text_out.strip(), flags=re.MULTILINE)
+                        parsed_val = json.loads(clean_json)
+                        if isinstance(parsed_val, list) and len(parsed_val) > 0 and isinstance(parsed_val[0], dict):
+                            parsed_res = parsed_val[0]
+                            engine_used = f"{model_name} + RAG vector search"
+                            break
+                        elif isinstance(parsed_val, dict):
+                            parsed_res = parsed_val
+                            engine_used = f"{model_name} + RAG vector search"
+                            break
+                except Exception as ex_m:
+                    print(f"[Warning] Attempt with model {model_name} failed: {ex_m}")
+                    continue
         except Exception as e:
             print(f"[Warning] Gemini API call exception: {e}. Falling back to deterministic engine.")
             engine_used = "deterministic_rules_fallback"

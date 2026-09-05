@@ -57,10 +57,17 @@ def _hash_vector(text: str, dim: int = 768) -> list:
     return vec.tolist()
 
 def cosine_similarity(v1: list, v2: list) -> float:
-    a = np.array(v1, dtype=np.float32)
-    b = np.array(v2, dtype=np.float32)
-    norm_a = np.linalg.norm(a)
-    norm_b = np.linalg.norm(b)
-    if norm_a == 0 or norm_b == 0:
+    try:
+        a = np.array(v1, dtype=np.float32)
+        b = np.array(v2, dtype=np.float32)
+        if len(a) != len(b):
+            min_dim = min(len(a), len(b))
+            a = a[:min_dim]
+            b = b[:min_dim]
+        norm_a = np.linalg.norm(a)
+        norm_b = np.linalg.norm(b)
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return float(np.dot(a, b) / (norm_a * norm_b))
+    except Exception:
         return 0.0
-    return float(np.dot(a, b) / (norm_a * norm_b))

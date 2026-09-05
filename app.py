@@ -47,6 +47,10 @@ def extract_text_from_file(file_storage) -> str:
 def serve_index():
     return send_from_directory('frontend', 'index.html')
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({
@@ -116,21 +120,35 @@ def review_lease():
 
         # 2. JSON payload
         elif request.is_json and request.json:
-            lease_text = request.json.get("lease_text", "")
+            lease_text = str(request.json.get("lease_text", "") or "")
 
         # 3. Form payload
         elif request.form:
-            lease_text = request.form.get("lease_text", "")
+            lease_text = str(request.form.get("lease_text", "") or "")
 
-        lease_text = lease_text.strip()
+        # Fallback raw data check if payload parsing missed
+        if not lease_text and request.data:
+            try:
+                lease_text = request.data.decode('utf-8', errors='ignore')
+            except Exception:
+                pass
+
+        lease_text = str(lease_text or "").strip()
         if not lease_text or len(lease_text) < 30:
             return jsonify({
                 "error": "Malformed or empty request. Please provide a valid lease agreement text or file (minimum 30 characters)."
             }), 400
 
-        # Run analysis pipeline
-        result = analyze_lease_agreement(lease_text)
-        return jsonify(result), 200
+        # Run analysis pipeline with safety fallback
+        try:
+            result = analyze_lease_agreement(lease_text)
+            return jsonify(result), 200
+        except Exception as ex_alg:
+            traceback.print_exc()
+            from engine.analyzer import deterministic_rule_analysis
+            result = deterministic_rule_analysis(lease_text)
+            result["engine_used"] = "deterministic_rules_fallback"
+            return jsonify(result), 200
 
     except Exception as e:
         traceback.print_exc()
